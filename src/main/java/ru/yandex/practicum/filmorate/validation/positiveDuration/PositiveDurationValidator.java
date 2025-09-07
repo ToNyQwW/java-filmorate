@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.Validation.positiveDuration;
+package ru.yandex.practicum.filmorate.validation.positiveDuration;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

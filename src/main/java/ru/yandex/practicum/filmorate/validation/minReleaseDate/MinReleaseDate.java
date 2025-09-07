@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.Validation.minReleaseDate;
+package ru.yandex.practicum.filmorate.validation.minReleaseDate;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
