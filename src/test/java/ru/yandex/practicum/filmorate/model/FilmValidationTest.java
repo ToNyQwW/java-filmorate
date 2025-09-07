@@ -7,7 +7,6 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -34,7 +33,7 @@ class FilmValidationTest {
         film.setName("film");
         film.setDescription("description");
         film.setReleaseDate(LocalDate.now());
-        film.setDuration(Duration.ofMinutes(200));
+        film.setDuration(200);
         return film;
     }
 
@@ -44,7 +43,7 @@ class FilmValidationTest {
         film.setName("");
         film.setDescription("");
         film.setReleaseDate(null);
-        film.setDuration(null);
+        film.setDuration(0);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(4, violations.size());
     }
@@ -84,20 +83,20 @@ class FilmValidationTest {
     @Test
     void testNegativeDuration() {
         Film film = createFilm();
-        film.setDuration(Duration.ofMinutes(-5));
+        film.setDuration(-5);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals("Duration must be positive",
-                violations.iterator().next().getMessage());
+        assertEquals("{jakarta.validation.constraints.Positive.message}",
+                violations.iterator().next().getMessageTemplate());
     }
 
     @Test
     void testZeroDuration() {
         Film film = createFilm();
-        film.setDuration(Duration.ZERO);
+        film.setDuration(0);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals("Duration must be positive",
-                violations.iterator().next().getMessage());
+        assertEquals("{jakarta.validation.constraints.Positive.message}",
+                violations.iterator().next().getMessageTemplate());
     }
 }
