@@ -66,7 +66,8 @@ class FilmValidationTest {
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(1, violations.size());
-        assertEquals("{jakarta.validation.constraints.Size.message}", violations.iterator().next().getMessageTemplate());
+        assertEquals("{jakarta.validation.constraints.Size.message}",
+                violations.iterator().next().getMessageTemplate());
     }
 
     @Test
