@@ -20,7 +20,6 @@ public class UserController {
 
     private int id;
 
-
     @GetMapping
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
@@ -53,5 +52,4 @@ public class UserController {
             user.setName(user.getLogin());
         }
     }
-
 }
