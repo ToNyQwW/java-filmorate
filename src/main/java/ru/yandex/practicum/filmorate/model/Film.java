@@ -16,7 +16,7 @@ import java.util.Set;
 @EqualsAndHashCode(of = "id")
 public class Film {
 
-    private int id;
+    private Long id;
 
     @NotBlank
     private String name;
@@ -32,13 +32,13 @@ public class Film {
     @Positive
     private int duration;
 
-    private final Set<Integer> userIdLikes = new HashSet<>();
+    private final Set<Long> userIdLikes = new HashSet<>();
 
-    public void addLike(int id) {
+    public void addLike(Long id) {
         userIdLikes.add(id);
     }
 
-    public void removeLike(int id) {
+    public void removeLike(Long id) {
         userIdLikes.remove(id);
     }
 

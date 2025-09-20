@@ -12,7 +12,7 @@ import java.util.Set;
 @EqualsAndHashCode(of = "id")
 public class User {
 
-    private int id;
+    private Long id;
 
     @NotBlank
     @Email
@@ -27,13 +27,13 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    private Set<Integer> friends = new HashSet<>();
+    private Set<Long> friends = new HashSet<>();
 
-    public void addFriend(int id) {
+    public void addFriend(Long id) {
         this.friends.add(id);
     }
 
-    public void removeFriend(int id) {
+    public void removeFriend(Long id) {
         this.friends.remove(id);
     }
 }

@@ -9,16 +9,16 @@ import java.util.*;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private final Map<Integer, Film> films;
+    private final Map<Long, Film> films;
 
-    private int id;
+    private Long id;
 
     public InMemoryFilmStorage() {
         this.films = new HashMap<>();
     }
 
     @Override
-    public boolean containsId(int id) {
+    public boolean containsId(Long id) {
         return this.films.containsKey(id);
     }
 
@@ -30,7 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(int id) {
+    public Film getFilm(Long id) {
         return films.get(id);
     }
 
@@ -46,17 +46,17 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addLike(int filmId, int userId) {
+    public void addLike(Long filmId, Long userId) {
         films.get(filmId).addLike(userId);
     }
 
     @Override
-    public void removeLike(int filmId, int userId) {
+    public void removeLike(Long filmId, Long userId) {
         films.get(filmId).removeLike(userId);
     }
 
     @Override
-    public List<Film> getPopularFilms(int count) {
+    public List<Film> getPopularFilms(Long count) {
         return films.values().stream()
                 .sorted(Comparator.comparingInt(Film::getLikesCount))
                 .limit(count)

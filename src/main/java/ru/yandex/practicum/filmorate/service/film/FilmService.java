@@ -8,15 +8,15 @@ public interface FilmService {
 
     Film addFilm(Film film);
 
-    Film getFilm(Integer id);
+    Film getFilm(Long id);
 
     List<Film> getFilms();
 
     Film updateFilm(Film film);
 
-    void addLike(Integer filmId, Integer userId);
+    void addLike(Long filmId, Long userId);
 
-    void removeLike(Integer filmId, Integer userId);
+    void removeLike(Long filmId, Long userId);
 
-    List<Film> getPopularFilms(int count);
+    List<Film> getPopularFilms(Long count);
 }

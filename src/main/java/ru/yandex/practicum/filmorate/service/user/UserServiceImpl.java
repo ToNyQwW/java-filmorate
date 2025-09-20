@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(int id) {
+    public User getUser(Long id) {
         return userStorage.getUser(id);
     }
 
@@ -38,22 +38,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriend(int id, int friendId) {
+    public void addFriend(Long id, Long friendId) {
         userStorage.addFriend(id, friendId);
     }
 
     @Override
-    public void removeFriend(int id, int friendId) {
+    public void removeFriend(Long id, Long friendId) {
         userStorage.removeFriend(id, friendId);
     }
 
     @Override
-    public List<User> getFriends(int id) {
+    public List<User> getFriends(Long id) {
         return userStorage.getFriends(id);
     }
 
     @Override
-    public List<User> getCommonFriends(int id, int otherId) {
+    public List<User> getCommonFriends(Long id, Long otherId) {
         return userStorage.getCommonFriends(id, otherId);
     }
 }

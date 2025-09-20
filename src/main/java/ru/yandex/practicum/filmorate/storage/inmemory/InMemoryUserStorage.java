@@ -12,16 +12,16 @@ import java.util.*;
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
-    private final Map<Integer, User> users;
+    private final Map<Long, User> users;
 
-    private int id;
+    private Long id;
 
     public InMemoryUserStorage() {
         this.users = new HashMap<>();
     }
 
     @Override
-    public boolean containsUserId(int id) {
+    public boolean containsUserId(Long id) {
         return users.containsKey(id);
     }
 
@@ -35,7 +35,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUser(int id) {
+    public User getUser(Long id) {
         return users.get(id);
     }
 
@@ -46,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        int userId = user.getId();
+        var userId = user.getId();
         if (!users.containsKey(userId)) {
             log.warn("User not found: {}", userId);
             throw new NotFoundException("User not found");
@@ -58,26 +58,26 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void addFriend(int id, int friendId) {
+    public void addFriend(Long id, Long friendId) {
         users.get(id).addFriend(friendId);
         users.get(friendId).addFriend(id);
     }
 
     @Override
-    public void removeFriend(int id, int friendId) {
+    public void removeFriend(Long id, Long friendId) {
         users.get(id).removeFriend(friendId);
     }
 
     @Override
-    public List<User> getFriends(int id) {
+    public List<User> getFriends(Long id) {
         return users.get(id).getFriends().stream()
                 .map(users::get)
                 .toList();
     }
 
     @Override
-    public List<User> getCommonFriends(int id, int otherId) {
-        Set<Integer> otherFriendsSet = new HashSet<>(users.get(otherId).getFriends());
+    public List<User> getCommonFriends(Long id, Long otherId) {
+        Set<Long> otherFriendsSet = new HashSet<>(users.get(otherId).getFriends());
 
         return users.get(id).getFriends().stream()
                 .filter(otherFriendsSet::contains)

@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 @Slf4j
-public class UserIdValidator implements ConstraintValidator<ValidUserId, Integer> {
+public class UserIdValidator implements ConstraintValidator<ValidUserId, Long> {
 
     @Autowired
     private UserStorage userStorage;
 
     @Override
-    public boolean isValid(Integer UserId, ConstraintValidatorContext context) {
+    public boolean isValid(Long UserId, ConstraintValidatorContext context) {
         boolean exists = userStorage.containsUserId(UserId);
 
         if (!exists) {

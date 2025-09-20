@@ -32,7 +32,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film getFilm(@ValidFilmId Integer id) {
+    public Film getFilm(@ValidFilmId Long id) {
         var film = filmStorage.getFilm(id);
         log.info("Film get: {}", film);
         return film;
@@ -53,19 +53,19 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public void addLike(@ValidFilmId Integer filmId, @ValidUserId Integer userId) {
+    public void addLike(@ValidFilmId Long filmId, @ValidUserId Long userId) {
         filmStorage.addLike(filmId, userId);
         log.info("Added like for filmId: {}, userId: {}", filmId, userId);
     }
 
     @Override
-    public void removeLike(@ValidFilmId Integer filmId, @ValidUserId Integer userId) {
+    public void removeLike(@ValidFilmId Long filmId, @ValidUserId Long userId) {
         filmStorage.removeLike(filmId, userId);
         log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
     }
 
     @Override
-    public List<Film> getPopularFilms(int count) {
+    public List<Film> getPopularFilms(Long count) {
         var popularFilms = filmStorage.getPopularFilms(count);
         log.info("Number of popular films found: {}", popularFilms.size());
         return popularFilms;
