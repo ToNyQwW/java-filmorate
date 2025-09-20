@@ -15,7 +15,7 @@ public class UserController {
 
     private final UserService userService;
 
-    private static final Long MIN_ID = 1L;
+    private static final long MIN_ID = 1L;
 
     @Autowired
     public UserController(UserService userService) {
