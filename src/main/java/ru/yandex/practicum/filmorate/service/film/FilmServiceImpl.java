@@ -52,10 +52,8 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film updateFilm(Film film) throws NotFoundException {
-        if (!filmStorage.containsId(film.getId())) {
-            log.info("Film not found: {}", film);
-            throw new NotFoundException("Film with id " + film.getId() + " not found");
-        }
+        validateFilmId(film.getId());
+
         var updatedFilm = filmStorage.updateFilm(film);
         log.info("Film updated: {}", updatedFilm);
         return updatedFilm;
@@ -63,23 +61,30 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void addLike(int filmId, int userId) {
-        validateIds(filmId, userId);
+        validateFilmId(filmId);
+        validateUserId(userId);
+
         filmStorage.addLike(filmId, userId);
         log.info("Added like for filmId: {}, userId: {}", filmId, userId);
     }
 
     @Override
     public void removeLike(int filmId, int userId) {
-        validateIds(filmId, userId);
+        validateFilmId(filmId);
+        validateUserId(userId);
+
         filmStorage.removeLike(filmId, userId);
         log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
     }
 
-    private void validateIds(int filmId, int userId) throws NotFoundException {
+    private void validateFilmId(int filmId) throws NotFoundException {
         if (!filmStorage.containsId(filmId)) {
             log.info("FilmId not found: {}", filmId);
             throw new NotFoundException("Film with id " + filmId + " not found");
         }
+    }
+
+    private void validateUserId(int userId) throws NotFoundException {
         if (!userStorage.containsUserId(userId)) {
             log.info("UserId not found: {}", userId);
             throw new NotFoundException("User with id " + userId + " not found");
@@ -88,6 +93,8 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        return filmStorage.getPopularFilms(count);
+        var popularFilms = filmStorage.getPopularFilms(count);
+        log.info("Number of popular films found: {}", popularFilms.size());
+        return popularFilms;
     }
 }

@@ -17,6 +17,7 @@ public class FilmController {
 
     private static final String DEFAULT_COUNT_POPULAR_FILMS = "10";
     private static final int MIN_ID = 1;
+    private static final int MIN_COUNT = 1;
 
     @Autowired
     public FilmController(FilmService filmService) {
@@ -44,18 +45,18 @@ public class FilmController {
     }
 
     @PutMapping("/{filmId}/like/{userId}")
-    public void addLike(@PathVariable @Min(1) int filmId, @PathVariable @Min(MIN_ID) int userId) {
+    public void addLike(@PathVariable @Min(MIN_ID) int filmId, @PathVariable @Min(MIN_ID) int userId) {
         filmService.addLike(filmId, userId);
     }
 
     @DeleteMapping("/{filmId}/like/{userId}")
-    public void removeLike(@PathVariable @Min(1) int filmId, @PathVariable @Min(MIN_ID) int userId) {
+    public void removeLike(@PathVariable @Min(MIN_ID) int filmId, @PathVariable @Min(MIN_ID) int userId) {
         filmService.removeLike(filmId, userId);
     }
 
     @GetMapping("/popular")
     public List<Film> getPopularFilms(
-            @RequestParam(name = "count", defaultValue = DEFAULT_COUNT_POPULAR_FILMS) int count) {
+            @RequestParam(name = "count", defaultValue = DEFAULT_COUNT_POPULAR_FILMS) @Min(MIN_COUNT) int count) {
         return filmService.getPopularFilms(count);
     }
 }
