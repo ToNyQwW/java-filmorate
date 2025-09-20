@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface FilmStorage {
 
+    boolean containsId(int id);
+
     Film addFilm(Film film);
 
     Optional<Film> getFilm(int id);

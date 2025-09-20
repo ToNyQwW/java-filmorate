@@ -49,14 +49,13 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film updateFilm(Film film) throws NotFoundException {
-        try {
-            var updatedFilm = filmStorage.updateFilm(film);
-            log.info("Film updated: {}", updatedFilm);
-            return updatedFilm;
-        } catch (NotFoundException e) {
+        if (!filmStorage.containsId(film.getId())) {
             log.info("Film not found: {}", film);
             throw new NotFoundException("Film with id " + film.getId() + " not found");
         }
+        var updatedFilm = filmStorage.updateFilm(film);
+        log.info("Film updated: {}", updatedFilm);
+        return updatedFilm;
     }
 
     @Override
