@@ -1,55 +1,36 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private final Map<Integer, User> users = new HashMap<>();
+    private final UserStorage userStorage;
 
-    private int id;
-
-    @GetMapping
-    public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+    @Autowired
+    public UserController(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        user.setId(++id);
-        normalize(user);
-        users.put(user.getId(), user);
-        log.info("User created: {}", user);
-        return user;
+        return userStorage.createUser(user);
+    }
+
+    @GetMapping
+    public List<User> getUsers() {
+        return userStorage.getUsers();
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        int userId = user.getId();
-        if (!users.containsKey(userId)) {
-            log.warn("User not found: {}", userId);
-            throw new NotFoundException("User not found");
-        }
-        normalize(user);
-        users.put(user.getId(), user);
-        log.info("User updated: {}", user);
-        return user;
-    }
-
-    private void normalize(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        return userStorage.updateUser(user);
     }
 }
