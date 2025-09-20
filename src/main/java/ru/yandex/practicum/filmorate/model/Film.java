@@ -41,4 +41,8 @@ public class Film {
     public void removeLike(int id) {
         userIdLikes.remove(id);
     }
+
+    public int getLikesCount() {
+        return userIdLikes.size();
+    }
 }
