@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service.film;
 
-import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,9 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> getFilms() {
-        return filmStorage.getFilms();
+        var films = filmStorage.getFilms();
+        log.info("Number of films found: {}", films.size());
+        return films;
     }
 
     @Override
