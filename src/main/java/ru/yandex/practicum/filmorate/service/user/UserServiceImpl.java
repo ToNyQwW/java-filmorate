@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validation.validUser.ValidUser;
-import ru.yandex.practicum.filmorate.validation.validUserId.ValidUserId;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(@ValidUserId Long id) {
+    public User getUser(Long id) {
         var user = userStorage.getUser(id);
         log.info("User found: {}", user);
         return user;
@@ -52,26 +51,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriend(@ValidUserId Long id, @ValidUserId Long friendId) {
+    public void addFriend(Long id, Long friendId) {
         userStorage.addFriend(id, friendId);
         log.info("Friend added: {}", friendId);
     }
 
     @Override
-    public void removeFriend(@ValidUserId Long id, @ValidUserId Long friendId) {
+    public void removeFriend(Long id, Long friendId) {
         userStorage.removeFriend(id, friendId);
         log.info("Friend removed: {}", friendId);
     }
 
     @Override
-    public List<User> getFriends(@ValidUserId Long id) {
+    public List<User> getFriends(Long id) {
         var friends = userStorage.getFriends(id);
         log.info("Number of friends found: {}", friends);
         return friends;
     }
 
     @Override
-    public List<User> getCommonFriends(@ValidUserId Long id, @ValidUserId Long otherId) {
+    public List<User> getCommonFriends(Long id, Long otherId) {
         var commonFriends = userStorage.getCommonFriends(id, otherId);
         log.info("Number of common friends found: {}", commonFriends);
         return commonFriends;

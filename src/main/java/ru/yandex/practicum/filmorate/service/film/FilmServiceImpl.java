@@ -6,9 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.validation.validFilm.ValidFilm;
-import ru.yandex.practicum.filmorate.validation.validFilmId.ValidFilmId;
-import ru.yandex.practicum.filmorate.validation.validUserId.ValidUserId;
 
 import java.util.List;
 
@@ -32,7 +29,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film getFilm(@ValidFilmId Long id) {
+    public Film getFilm(Long id) {
         var film = filmStorage.getFilm(id);
         log.info("Film get: {}", film);
         return film;
@@ -46,20 +43,20 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film updateFilm(@ValidFilm Film film) {
+    public Film updateFilm(Film film) {
         var updatedFilm = filmStorage.updateFilm(film);
         log.info("Film updated: {}", updatedFilm);
         return updatedFilm;
     }
 
     @Override
-    public void addLike(@ValidFilmId Long filmId, @ValidUserId Long userId) {
+    public void addLike(Long filmId, Long userId) {
         filmStorage.addLike(filmId, userId);
         log.info("Added like for filmId: {}, userId: {}", filmId, userId);
     }
 
     @Override
-    public void removeLike(@ValidFilmId Long filmId, @ValidUserId Long userId) {
+    public void removeLike(Long filmId, Long userId) {
         filmStorage.removeLike(filmId, userId);
         log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
     }
