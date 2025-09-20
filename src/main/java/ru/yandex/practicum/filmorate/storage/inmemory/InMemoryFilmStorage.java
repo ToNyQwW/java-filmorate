@@ -24,7 +24,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film addFilm(Film film) {
         film.setId(++id);
         films.put(film.getId(), film);
-        log.info("Film added: {}", film);
         return film;
     }
 
@@ -42,11 +41,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film updateFilm(Film film) throws NotFoundException {
         int filmId = film.getId();
         if (!films.containsKey(filmId)) {
-            log.warn("Film not found: {}", film);
-            throw new NotFoundException("Film not found");
+            throw new NotFoundException();
         }
         films.put(filmId, film);
-        log.info("Film updated: {}", film);
         return film;
     }
 

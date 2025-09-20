@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -14,6 +15,9 @@ public class FilmController {
 
     private final FilmService filmService;
 
+    private static final String DEFAULT_COUNT_POPULAR_FILMS = "10";
+    private static final int MIN_ID = 1;
+
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
@@ -25,7 +29,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilm(@PathVariable int id) {
+    public Film getFilm(@PathVariable @Min(MIN_ID) int id) {
         return filmService.getFilm(id);
     }
 
@@ -40,17 +44,18 @@ public class FilmController {
     }
 
     @PutMapping("/{filmId}/like/{userId}")
-    public void addLike(@PathVariable int filmId, @PathVariable int userId) {
+    public void addLike(@PathVariable @Min(1) int filmId, @PathVariable @Min(MIN_ID) int userId) {
         filmService.addLike(filmId, userId);
     }
 
     @DeleteMapping("/{filmId}/like/{userId}")
-    public void removeLike(@PathVariable int filmId, @PathVariable int userId) {
+    public void removeLike(@PathVariable @Min(1) int filmId, @PathVariable @Min(MIN_ID) int userId) {
         filmService.removeLike(filmId, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(name = "count", defaultValue = "10") int count) {
+    public List<Film> getPopularFilms(
+            @RequestParam(name = "count", defaultValue = DEFAULT_COUNT_POPULAR_FILMS) int count) {
         return filmService.getPopularFilms(count);
     }
 }

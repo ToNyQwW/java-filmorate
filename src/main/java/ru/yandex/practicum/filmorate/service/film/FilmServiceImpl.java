@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film;
 
+import jakarta.validation.constraints.Min;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -8,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class FilmServiceImpl implements FilmService {
 
@@ -20,20 +23,20 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film addFilm(Film film) {
-        return filmStorage.addFilm(film);
+        var addedFilm = filmStorage.addFilm(film);
+        log.info("Film added: {}", film);
+        return addedFilm;
     }
 
     @Override
-    public Film getFilm(int id) {
-
-        if (id <= 0) {
-            throw new IllegalArgumentException("id must be greater than zero");
-        }
+    public Film getFilm(int id) throws NotFoundException {
         var film = filmStorage.getFilm(id);
 
         if (film.isPresent()) {
+            log.info("Film found: {}", film);
             return film.get();
         } else {
+            log.info("Film not found: {}", id);
             throw new NotFoundException("Film with id " + id + " not found");
         }
     }
@@ -44,8 +47,15 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
+    public Film updateFilm(Film film) throws NotFoundException {
+        try {
+            var updatedFilm = filmStorage.updateFilm(film);
+            log.info("Film updated: {}", updatedFilm);
+            return updatedFilm;
+        } catch (NotFoundException e) {
+            log.info("Film not found: {}", film);
+            throw new NotFoundException("Film with id " + film.getId() + " not found");
+        }
     }
 
     @Override
