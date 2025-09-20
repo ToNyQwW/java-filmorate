@@ -16,8 +16,8 @@ public class FilmController {
     private final FilmService filmService;
 
     private static final String DEFAULT_COUNT_POPULAR_FILMS = "10";
-    private static final long MIN_ID = 1L;
-    private static final long MIN_COUNT = 1L;
+    private static final Long MIN_ID = 1L;
+    private static final Long MIN_COUNT = 1L;
 
     @Autowired
     public FilmController(FilmService filmService) {
