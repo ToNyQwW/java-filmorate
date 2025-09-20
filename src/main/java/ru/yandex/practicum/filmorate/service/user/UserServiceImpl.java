@@ -23,6 +23,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUser(int id) {
+        return userStorage.getUser(id);
+    }
+
+    @Override
     public List<User> getUsers() {
         return userStorage.getUsers();
     }
