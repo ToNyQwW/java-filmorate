@@ -33,6 +33,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public User getUser(int id) {
+        return users.get(id);
+    }
+
+    @Override
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
@@ -48,6 +53,23 @@ public class InMemoryUserStorage implements UserStorage {
         users.put(user.getId(), user);
         log.info("User updated: {}", user);
         return user;
+    }
+
+    @Override
+    public void addFriend(int id, int friendId) {
+        users.get(id).addFriend(friendId);
+    }
+
+    @Override
+    public void removeFriend(int id, int friendId) {
+        users.get(id).removeFriend(friendId);
+    }
+
+    @Override
+    public List<User> getFriends(int id) {
+        return users.get(id).getFriends().stream()
+                .map(users::get)
+                .toList();
     }
 
     private void normalize(User user) {
