@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -19,6 +20,7 @@ public class FilmValidator implements ConstraintValidator<ValidFilm, Film> {
 
         if (!exists) {
             log.info("Film not found: {}", film);
+            throw new NotFoundException("Film with id=" + film.getId() + " not found");
         }
         return exists;
     }

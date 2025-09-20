@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 @Slf4j
@@ -21,7 +21,7 @@ public class UserIdValidator implements ConstraintValidator<ValidUserId, Long> {
 
         if (!exists) {
             log.info("UserId not found: {}", userId);
-            throw new UserNotFoundException(userId);
+            throw new NotFoundException("User with id=" + userId + " not found");
         }
         return exists;
     }
