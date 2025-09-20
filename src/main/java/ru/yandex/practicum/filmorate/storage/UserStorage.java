@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface UserStorage {
 
+    boolean containsUserId(int id);
+
     User createUser(User user);
 
     User getUser(int id);

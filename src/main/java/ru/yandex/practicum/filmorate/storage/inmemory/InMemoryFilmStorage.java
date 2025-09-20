@@ -19,6 +19,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         this.films = new HashMap<>();
     }
 
+    @Override
     public boolean containsId(int id) {
         return this.films.containsKey(id);
     }

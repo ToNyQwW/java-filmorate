@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
@@ -14,10 +15,12 @@ import java.util.List;
 public class FilmServiceImpl implements FilmService {
 
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    public FilmServiceImpl(FilmStorage filmStorage) {
+    public FilmServiceImpl(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     @Override
@@ -60,12 +63,27 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void addLike(int filmId, int userId) {
+        validateIds(filmId, userId);
         filmStorage.addLike(filmId, userId);
+        log.info("Added like for filmId: {}, userId: {}", filmId, userId);
     }
 
     @Override
     public void removeLike(int filmId, int userId) {
+        validateIds(filmId, userId);
         filmStorage.removeLike(filmId, userId);
+        log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
+    }
+
+    private void validateIds(int filmId, int userId) throws NotFoundException {
+        if (!filmStorage.containsId(filmId)) {
+            log.info("FilmId not found: {}", filmId);
+            throw new NotFoundException("Film with id " + filmId + " not found");
+        }
+        if (!userStorage.containsUserId(userId)) {
+            log.info("UserId not found: {}", userId);
+            throw new NotFoundException("User with id " + userId + " not found");
+        }
     }
 
     @Override
