@@ -15,6 +15,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public InMemoryFilmStorage() {
         this.films = new HashMap<>();
+        id = 0L;
     }
 
     @Override
