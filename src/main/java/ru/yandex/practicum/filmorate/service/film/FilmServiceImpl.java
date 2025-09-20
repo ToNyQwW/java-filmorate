@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service.film;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -24,7 +25,17 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film getFilm(int id) {
-        return filmStorage.getFilm(id);
+
+        if (id <= 0) {
+            throw new IllegalArgumentException("id must be greater than zero");
+        }
+        var film = filmStorage.getFilm(id);
+
+        if (film.isPresent()) {
+            return film.get();
+        } else {
+            throw new NotFoundException("Film with id " + id + " not found");
+        }
     }
 
     @Override
