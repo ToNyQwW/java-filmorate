@@ -16,7 +16,10 @@ public class MinReleaseDateValidator implements ConstraintValidator<MinReleaseDa
         if (localDate == null) {
             return true;
         }
-        log.info("Invalid date");
-        return !localDate.isBefore(MIN_DATE);
+        var checkDate = !localDate.isBefore(MIN_DATE);
+        if (!checkDate) {
+            log.warn("Incorrect date");
+        }
+        return checkDate;
     }
 }
