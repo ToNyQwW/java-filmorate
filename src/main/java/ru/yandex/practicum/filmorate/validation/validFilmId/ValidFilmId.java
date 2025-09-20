@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = FilmIdValidator.class)
 public @interface ValidFilmId {
 
-    String message() default "Film not found";
+    String message() default "FilmId not found";
 
     Class<?>[] groups() default {};
 

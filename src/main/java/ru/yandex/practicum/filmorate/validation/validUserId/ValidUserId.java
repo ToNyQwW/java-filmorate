@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = UserIdValidator.class)
 public @interface ValidUserId {
 
-    String message() default "User not found";
+    String message() default "UserId not found";
 
     Class<?>[] groups() default {};
 
