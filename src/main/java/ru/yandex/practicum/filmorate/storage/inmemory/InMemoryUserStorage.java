@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -69,6 +66,16 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public List<User> getFriends(int id) {
         return users.get(id).getFriends().stream()
+                .map(users::get)
+                .toList();
+    }
+
+    @Override
+    public List<User> getCommonFriends(int id, int otherId) {
+        Set<Integer> otherFriendsSet = new HashSet<>(users.get(otherId).getFriends());
+
+        return users.get(id).getFriends().stream()
+                .filter(otherFriendsSet::contains)
                 .map(users::get)
                 .toList();
     }
