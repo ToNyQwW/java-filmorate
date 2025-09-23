@@ -48,9 +48,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
-        var updatedUser = userStorage.updateUser(user);
-        log.info("User updated: {}", updatedUser);
-        return updatedUser;
+        try {
+            var updatedUser = userStorage.updateUser(user);
+            log.info("User updated: {}", updatedUser);
+            return updatedUser;
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
