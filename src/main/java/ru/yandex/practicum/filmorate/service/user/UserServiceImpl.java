@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Long id) {
+    public User getUser(Long id) throws NotFoundException {
         var user = userStorage.getUser(id);
         if (user.isPresent()) {
             var findedUser = user.get();
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
+    public User updateUser(User user) throws NotFoundException {
         try {
             var updatedUser = userStorage.updateUser(user);
             log.info("User updated: {}", updatedUser);
@@ -59,28 +59,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriend(Long id, Long friendId) {
-        userStorage.addFriend(id, friendId);
-        log.info("Friend added: {}", friendId);
+    public void addFriend(Long id, Long friendId) throws NotFoundException {
+        try {
+            userStorage.addFriend(id, friendId);
+            log.info("Friend added: {}", friendId);
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
-    public void removeFriend(Long id, Long friendId) {
-        userStorage.removeFriend(id, friendId);
-        log.info("Friend removed: {}", friendId);
+    public void removeFriend(Long id, Long friendId) throws NotFoundException {
+        try {
+            userStorage.removeFriend(id, friendId);
+            log.info("Friend removed: {}", friendId);
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
-    public List<User> getFriends(Long id) {
-        var friends = userStorage.getFriends(id);
-        log.info("Number of friends found: {}", friends);
-        return friends;
+    public List<User> getFriends(Long id) throws NotFoundException {
+        try {
+            var friends = userStorage.getFriends(id);
+            log.info("Number of friends found: {}", friends);
+            return friends;
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
-    public List<User> getCommonFriends(Long id, Long otherId) {
-        var commonFriends = userStorage.getCommonFriends(id, otherId);
-        log.info("Number of common friends found: {}", commonFriends);
-        return commonFriends;
+    public List<User> getCommonFriends(Long id, Long otherId) throws NotFoundException {
+        try {
+            var commonFriends = userStorage.getCommonFriends(id, otherId);
+            log.info("Number of common friends found: {}", commonFriends);
+            return commonFriends;
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            throw e;
+        }
     }
 }
