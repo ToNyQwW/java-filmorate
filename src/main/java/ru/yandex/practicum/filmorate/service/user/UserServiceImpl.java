@@ -3,15 +3,13 @@ package ru.yandex.practicum.filmorate.service.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.validation.validUser.ValidUser;
 
 import java.util.List;
 
 @Slf4j
-@Validated
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -32,8 +30,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(Long id) {
         var user = userStorage.getUser(id);
-        log.info("User found: {}", user);
-        return user;
+        if (user.isPresent()) {
+            var findedUser = user.get();
+            log.info("User found: {}", findedUser);
+            return findedUser;
+        }
+        log.info("User with id {} not found", id);
+        throw new NotFoundException("User with id " + id + " not found");
     }
 
     @Override
@@ -44,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(@ValidUser User user) {
+    public User updateUser(User user) {
         var updatedUser = userStorage.updateUser(user);
         log.info("User updated: {}", updatedUser);
         return updatedUser;
