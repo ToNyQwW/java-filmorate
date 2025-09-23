@@ -45,7 +45,7 @@ class UserStorageTest {
         saved.setName("UpdatedName");
         User updated = userStorage.updateUser(saved);
 
-        assertEquals("UpdatedName", userStorage.getUser(saved.getId()).getName());
+        assertEquals("UpdatedName", userStorage.getUser(saved.getId()).get().getName());
         assertEquals(updated, userStorage.getUser(saved.getId()));
     }
 
