@@ -3,14 +3,13 @@ package ru.yandex.practicum.filmorate.service.film;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.List;
 
 @Slf4j
-@Validated
 @Service
 public class FilmServiceImpl implements FilmService {
 
@@ -29,10 +28,15 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film getFilm(Long id) {
+    public Film getFilm(Long id) throws NotFoundException {
         var film = filmStorage.getFilm(id);
-        log.info("Film get: {}", film);
-        return film;
+        if (film.isPresent()) {
+            var findedFilm = film.get();
+            log.info("Film found: {}", findedFilm);
+            return findedFilm;
+        }
+        log.info("Film with id {} not found", id);
+        throw new NotFoundException("Film with id " + id + " not found");
     }
 
     @Override
@@ -43,22 +47,37 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film updateFilm(Film film) {
-        var updatedFilm = filmStorage.updateFilm(film);
-        log.info("Film updated: {}", updatedFilm);
-        return updatedFilm;
+    public Film updateFilm(Film film) throws NotFoundException {
+        try {
+            var updatedFilm = filmStorage.updateFilm(film);
+            log.info("Film updated: {}", updatedFilm);
+            return updatedFilm;
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public void addLike(Long filmId, Long userId) {
-        filmStorage.addLike(filmId, userId);
-        log.info("Added like for filmId: {}, userId: {}", filmId, userId);
+        try {
+            filmStorage.addLike(filmId, userId);
+            log.info("Added like for filmId: {}, userId: {}", filmId, userId);
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public void removeLike(Long filmId, Long userId) {
-        filmStorage.removeLike(filmId, userId);
-        log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
+        try {
+            filmStorage.removeLike(filmId, userId);
+            log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
