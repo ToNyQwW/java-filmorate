@@ -26,11 +26,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public boolean containsId(Long id) {
-        return this.films.containsKey(id);
-    }
-
-    @Override
     public Film addFilm(Film film) {
         film.setId(++id);
         films.put(film.getId(), film);
@@ -47,41 +42,51 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
-    private void checkFIlmId(Long filmId) throws NotFoundException {
+    private void containsFilmId(Long filmId) throws NotFoundException {
         if (!films.containsKey(filmId)) {
             throw new NotFoundException("Film with id " + filmId + " not found");
         }
     }
 
-    private void checkUserId(Long userId) throws NotFoundException {
-        if (!userStorage.containsUserId(userId)) {
-            throw new NotFoundException("User with id " + userId + " not found");
-        }
-    }
-
     @Override
-    public Film updateFilm(Film film) {
+    public Film updateFilm(Film film) throws NotFoundException {
         var filmId = film.getId();
-        checkFIlmId(filmId);
+        containsFilmId(filmId);
 
         films.put(filmId, film);
         return film;
     }
 
-    @Override
-    public void addLike(Long filmId, Long userId) {
-        checkFIlmId(filmId);
-        checkUserId(userId);
+    private void containsUserId(Long userId) throws NotFoundException {
+        if (!userStorage.containsUserId(userId)) {
+            throw new NotFoundException("User with id " + userId + " not found");
+        }
+    }
 
-        films.get(filmId).addLike(userId);
+    private void checkFilm(Long id, Film film) throws NotFoundException {
+        if (film == null) {
+            throw new NotFoundException("Film with id " + id + " not found");
+        }
     }
 
     @Override
-    public void removeLike(Long filmId, Long userId) {
-        checkFIlmId(filmId);
-        checkUserId(userId);
+    public void addLike(Long filmId, Long userId) throws NotFoundException {
+        var film = films.get(filmId);
 
-        films.get(filmId).removeLike(userId);
+        checkFilm(filmId, film);
+
+        containsUserId(userId);
+        film.addLike(userId);
+    }
+
+    @Override
+    public void removeLike(Long filmId, Long userId) throws NotFoundException {
+        var film = films.get(filmId);
+
+        checkFilm(filmId, film);
+
+        containsUserId(userId);
+        film.removeLike(userId);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
-    private void checkId(Long userId) throws NotFoundException {
+    private void containsId(Long userId) throws NotFoundException {
         if (!users.containsKey(userId)) {
             throw new NotFoundException("User with id " + userId + " not found");
         }
@@ -51,48 +51,65 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) throws NotFoundException {
         var userId = user.getId();
-        checkId(userId);
+        containsId(userId);
 
         normalize(user);
         users.put(userId, user);
         return user;
     }
 
+    private void checkUser(Long id, User user) throws NotFoundException {
+        if (user == null) {
+            throw new NotFoundException("User with id " + id + " not found");
+        }
+    }
+
     @Override
     public void addFriend(Long id, Long friendId) throws NotFoundException {
-        checkId(id);
-        checkId(friendId);
+        var user = users.get(id);
+        var friend = users.get(friendId);
 
-        users.get(id).addFriend(friendId);
-        users.get(friendId).addFriend(id);
+        checkUser(id, user);
+        checkUser(friendId, friend);
+
+        user.addFriend(friendId);
+        friend.addFriend(id);
     }
 
     @Override
     public void removeFriend(Long id, Long friendId) throws NotFoundException {
-        checkId(id);
-        checkId(friendId);
+        var user = users.get(id);
+        var friend = users.get(friendId);
 
-        users.get(id).removeFriend(friendId);
-        users.get(friendId).removeFriend(id);
+        checkUser(id, user);
+        checkUser(friendId, friend);
+
+        user.removeFriend(friendId);
+        friend.removeFriend(id);
     }
 
     @Override
     public List<User> getFriends(Long id) throws NotFoundException {
-        checkId(id);
+        var user = users.get(id);
 
-        return users.get(id).getFriends().stream()
+        checkUser(id, user);
+
+        return user.getFriends().stream()
                 .map(users::get)
                 .toList();
     }
 
     @Override
     public List<User> getCommonFriends(Long id, Long otherId) throws NotFoundException {
-        checkId(id);
-        checkId(otherId);
+        var user = users.get(id);
+        var otherUser = users.get(otherId);
 
-        Set<Long> otherFriendsSet = new HashSet<>(users.get(otherId).getFriends());
+        checkUser(id, user);
+        checkUser(otherId, otherUser);
 
-        return users.get(id).getFriends().stream()
+        Set<Long> otherFriendsSet = new HashSet<>(otherUser.getFriends());
+
+        return user.getFriends().stream()
                 .filter(otherFriendsSet::contains)
                 .map(users::get)
                 .toList();

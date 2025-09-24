@@ -45,7 +45,7 @@ class FilmStorageTest {
         Film saved = filmStorage.addFilm(film);
 
         assertNotNull(saved.getId());
-        assertTrue(filmStorage.containsId(saved.getId()));
+        assertNotNull(filmStorage.getFilm(saved.getId()));
         assertEquals("Matrix", filmStorage.getFilm(saved.getId()).get().getName());
     }
 
