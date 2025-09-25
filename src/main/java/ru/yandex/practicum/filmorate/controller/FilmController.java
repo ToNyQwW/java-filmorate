@@ -1,48 +1,64 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.constraints.Min;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
 
+    private final FilmService filmService;
 
-    private final Map<Integer, Film> films = new HashMap<>();
+    private static final String DEFAULT_COUNT_POPULAR_FILMS = "10";
+    private static final long MIN_ID = 1L;
+    private static final long MIN_COUNT = 1L;
 
-    private int id;
-
-    @GetMapping
-    public List<Film> getFilms() {
-        return new ArrayList<>(films.values());
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Film addFilm(@Valid @RequestBody Film film) {
-        film.setId(++id);
-        films.put(film.getId(), film);
-        log.info("Film added: {}", film);
-        return film;
+        return filmService.addFilm(film);
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilm(@PathVariable @Min(MIN_ID) Long id) {
+        return filmService.getFilm(id);
+    }
+
+    @GetMapping
+    public List<Film> getFilms() {
+        return filmService.getFilms();
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) throws NotFoundException {
-        int filmId = film.getId();
-        if (!films.containsKey(filmId)) {
-            log.warn("Film not found: {}", film);
-            throw new NotFoundException("Film not found");
-        }
-        films.put(filmId, film);
-        log.info("Film updated: {}", film);
-        return film;
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        return filmService.updateFilm(film);
+    }
+
+    @PutMapping("/{filmId}/like/{userId}")
+    public void addLike(@PathVariable @Min(MIN_ID) Long filmId, @PathVariable @Min(MIN_ID) Long userId) {
+        filmService.addLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{filmId}/like/{userId}")
+    public void removeLike(@PathVariable @Min(MIN_ID) Long filmId, @PathVariable @Min(MIN_ID) Long userId) {
+        filmService.removeLike(filmId, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(
+            @RequestParam(name = "count", defaultValue = DEFAULT_COUNT_POPULAR_FILMS) @Min(MIN_COUNT) Long count) {
+        return filmService.getPopularFilms(count);
     }
 }

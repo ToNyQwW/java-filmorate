@@ -5,14 +5,18 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.validation.minReleaseDate.MinReleaseDate;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
+@EqualsAndHashCode(of = "id")
 public class Film {
 
-    private int id;
+    private Long id;
 
     @NotBlank
     private String name;
@@ -27,4 +31,18 @@ public class Film {
 
     @Positive
     private int duration;
+
+    private final Set<Long> userIdLikes = new HashSet<>();
+
+    public void addLike(Long id) {
+        userIdLikes.add(id);
+    }
+
+    public void removeLike(Long id) {
+        userIdLikes.remove(id);
+    }
+
+    public int getLikesCount() {
+        return userIdLikes.size();
+    }
 }
