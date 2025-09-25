@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
             log.info("User found: {}", findedUser);
             return findedUser;
         }
-        log.info("User with id {} not found", id);
+        log.error("User with id {} not found", id);
         throw new NotFoundException("User with id " + id + " not found");
     }
 
@@ -52,8 +52,8 @@ public class UserServiceImpl implements UserService {
             var updatedUser = userStorage.updateUser(user);
             log.info("User updated: {}", updatedUser);
             return updatedUser;
-        } catch (NotFoundException e) {
-            log.info(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw e;
         }
     }
@@ -63,8 +63,8 @@ public class UserServiceImpl implements UserService {
         try {
             userStorage.addFriend(id, friendId);
             log.info("Friend added: {}", friendId);
-        } catch (NotFoundException e) {
-            log.info(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw e;
         }
     }
@@ -74,8 +74,8 @@ public class UserServiceImpl implements UserService {
         try {
             userStorage.removeFriend(id, friendId);
             log.info("Friend removed: {}", friendId);
-        } catch (NotFoundException e) {
-            log.info(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw e;
         }
     }
@@ -86,8 +86,8 @@ public class UserServiceImpl implements UserService {
             var friends = userStorage.getFriends(id);
             log.info("Number of friends found: {}", friends);
             return friends;
-        } catch (NotFoundException e) {
-            log.info(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw e;
         }
     }
@@ -98,8 +98,8 @@ public class UserServiceImpl implements UserService {
             var commonFriends = userStorage.getCommonFriends(id, otherId);
             log.info("Number of common friends found: {}", commonFriends);
             return commonFriends;
-        } catch (NotFoundException e) {
-            log.info(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw e;
         }
     }

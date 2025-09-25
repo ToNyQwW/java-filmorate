@@ -42,7 +42,7 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
-    private void containsId(Long userId) throws NotFoundException {
+    private void throwIfUserIdNotExists(Long userId) throws NotFoundException {
         if (!users.containsKey(userId)) {
             throw new NotFoundException("User with id " + userId + " not found");
         }
@@ -51,17 +51,11 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) throws NotFoundException {
         var userId = user.getId();
-        containsId(userId);
+        throwIfUserIdNotExists(userId);
 
         normalize(user);
         users.put(userId, user);
         return user;
-    }
-
-    private void checkUser(Long id, User user) throws NotFoundException {
-        if (user == null) {
-            throw new NotFoundException("User with id " + id + " not found");
-        }
     }
 
     @Override
@@ -69,8 +63,12 @@ public class InMemoryUserStorage implements UserStorage {
         var user = users.get(id);
         var friend = users.get(friendId);
 
-        checkUser(id, user);
-        checkUser(friendId, friend);
+        if (user == null) {
+            throw new NotFoundException("User with id " + id + " not found");
+        }
+        if (friend == null) {
+            throw new NotFoundException("User with id " + friendId + " not found");
+        }
 
         user.addFriend(friendId);
         friend.addFriend(id);
@@ -81,8 +79,12 @@ public class InMemoryUserStorage implements UserStorage {
         var user = users.get(id);
         var friend = users.get(friendId);
 
-        checkUser(id, user);
-        checkUser(friendId, friend);
+        if (user == null) {
+            throw new NotFoundException("User with id " + id + " not found");
+        }
+        if (friend == null) {
+            throw new NotFoundException("User with id " + friendId + " not found");
+        }
 
         user.removeFriend(friendId);
         friend.removeFriend(id);
@@ -92,7 +94,9 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getFriends(Long id) throws NotFoundException {
         var user = users.get(id);
 
-        checkUser(id, user);
+        if (user == null) {
+            throw new NotFoundException("User with id " + id + " not found");
+        }
 
         return user.getFriends().stream()
                 .map(users::get)
@@ -104,8 +108,12 @@ public class InMemoryUserStorage implements UserStorage {
         var user = users.get(id);
         var otherUser = users.get(otherId);
 
-        checkUser(id, user);
-        checkUser(otherId, otherUser);
+        if (user == null) {
+            throw new NotFoundException("User with id " + id + " not found");
+        }
+        if (otherUser == null) {
+            throw new NotFoundException("User with id " + otherId + " not found");
+        }
 
         Set<Long> otherFriendsSet = new HashSet<>(otherUser.getFriends());
 

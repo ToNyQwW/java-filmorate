@@ -42,7 +42,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
-    private void containsFilmId(Long filmId) throws NotFoundException {
+    private void throwIfFilmIdNotExists(Long filmId) throws NotFoundException {
         if (!films.containsKey(filmId)) {
             throw new NotFoundException("Film with id " + filmId + " not found");
         }
@@ -51,21 +51,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) throws NotFoundException {
         var filmId = film.getId();
-        containsFilmId(filmId);
+        throwIfFilmIdNotExists(filmId);
 
         films.put(filmId, film);
         return film;
     }
 
-    private void containsUserId(Long userId) throws NotFoundException {
+    private void throwIfUserIdNotExists(Long userId) throws NotFoundException {
         if (!userStorage.containsUserId(userId)) {
             throw new NotFoundException("User with id " + userId + " not found");
-        }
-    }
-
-    private void checkFilm(Long id, Film film) throws NotFoundException {
-        if (film == null) {
-            throw new NotFoundException("Film with id " + id + " not found");
         }
     }
 
@@ -73,9 +67,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     public void addLike(Long filmId, Long userId) throws NotFoundException {
         var film = films.get(filmId);
 
-        checkFilm(filmId, film);
+        if (film == null) {
+            throw new NotFoundException("Film with id " + id + " not found");
+        }
 
-        containsUserId(userId);
+        throwIfUserIdNotExists(userId);
         film.addLike(userId);
     }
 
@@ -83,9 +79,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     public void removeLike(Long filmId, Long userId) throws NotFoundException {
         var film = films.get(filmId);
 
-        checkFilm(filmId, film);
+        if (film == null) {
+            throw new NotFoundException("Film with id " + id + " not found");
+        }
 
-        containsUserId(userId);
+        throwIfUserIdNotExists(userId);
         film.removeLike(userId);
     }
 

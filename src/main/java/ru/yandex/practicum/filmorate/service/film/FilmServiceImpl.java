@@ -35,7 +35,7 @@ public class FilmServiceImpl implements FilmService {
             log.info("Film found: {}", findedFilm);
             return findedFilm;
         }
-        log.info("Film with id {} not found", id);
+        log.error("Film with id {} not found", id);
         throw new NotFoundException("Film with id " + id + " not found");
     }
 
@@ -52,8 +52,8 @@ public class FilmServiceImpl implements FilmService {
             var updatedFilm = filmStorage.updateFilm(film);
             log.info("Film updated: {}", updatedFilm);
             return updatedFilm;
-        } catch (NotFoundException e) {
-            log.info(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw e;
         }
     }
@@ -63,8 +63,8 @@ public class FilmServiceImpl implements FilmService {
         try {
             filmStorage.addLike(filmId, userId);
             log.info("Added like for filmId: {}, userId: {}", filmId, userId);
-        } catch (NotFoundException e) {
-            log.info(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw e;
         }
     }
@@ -74,8 +74,8 @@ public class FilmServiceImpl implements FilmService {
         try {
             filmStorage.removeLike(filmId, userId);
             log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
-        } catch (NotFoundException e) {
-            log.info(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw e;
         }
     }
