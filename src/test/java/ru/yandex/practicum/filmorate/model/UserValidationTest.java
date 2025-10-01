@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +25,8 @@ class UserValidationTest {
         validator = factory.getValidator();
     }
 
-    @BeforeAll
-    static void beforeAll() {
+    @AfterAll
+    static void afterAll() {
         factory.close();
     }
 
