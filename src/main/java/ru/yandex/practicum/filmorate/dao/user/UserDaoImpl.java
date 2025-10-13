@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.indb;
+package ru.yandex.practicum.filmorate.dao.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -6,7 +6,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -16,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-public class UserDbStorage implements UserStorage {
+public class UserDaoImpl implements UserDao {
 
 
     private final JdbcTemplate jdbcTemplate;

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.dao.user.UserDao;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage userStorage;
+    private final UserDao userStorage;
 
     @Autowired
-    public UserServiceImpl(UserStorage userStorage) {
+    public UserServiceImpl(UserDao userStorage) {
         this.userStorage = userStorage;
     }
 

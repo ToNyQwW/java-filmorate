@@ -1,13 +1,11 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao.user;
 
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserStorage {
-
-    boolean containsUserId(Long id);
+public interface UserDao {
 
     User createUser(User user);
 
