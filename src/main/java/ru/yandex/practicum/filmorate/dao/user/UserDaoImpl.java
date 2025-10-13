@@ -5,7 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.entity.User;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -19,11 +19,6 @@ public class UserDaoImpl implements UserDao {
 
 
     private final JdbcTemplate jdbcTemplate;
-
-    @Override
-    public boolean containsUserId(Long id) {
-        return false;
-    }
 
     @Override
     public User createUser(User user) {
