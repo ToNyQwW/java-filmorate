@@ -1,15 +1,15 @@
 package ru.yandex.practicum.filmorate.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 @Data
-@EqualsAndHashCode(of = {"userId", "friendId"})
+@AllArgsConstructor
 public class Friendship {
 
     private Long userId;
 
-    private Long friendId;
-
-    private boolean confirmed;
+    private List<Long> friendsId;
 }

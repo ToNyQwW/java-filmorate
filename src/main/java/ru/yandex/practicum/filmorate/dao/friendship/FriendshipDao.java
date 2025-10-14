@@ -24,31 +24,32 @@ public class FriendshipDao {
             WHERE user_id = ? AND is_confirmed = true;
             """;
 
-    private static final String CONFIRM_FRIENDSHIP_SQL = """
-            UPDATE friendship
-            SET is_confirmed = true
-            WHERE (user_id = ? AND friend_id = ?)
-               OR (user_id = ? AND friend_id = ?);
-            """;
-
     private static final String REMOVE_FRIENDSHIP_SQL = """
             DELETE FROM friendship
             WHERE (user_id = ? AND friend_id = ?)
             OR (user_id = ? AND friend_id = ?);
             """;
 
+    private static final String GET_COMMON_FRIENDS_SQL = """
+            SELECT f1.friend_id
+            FROM friendship f1
+            INNER JOIN friendship f2 ON f1.friend_id = f2.friend_id
+            WHERE f1.user_id = ? AND f2.user_id = ?;
+            """;
+
     private final JdbcTemplate jdbcTemplate;
 
-    public void addFriendship(Friendship friendship) {
-        jdbcTemplate.update(ADD_FRIENDSHIP_SQL, friendship.getUserId(), friendship.getFriendId(), true);
+    public void addFriendship(Long userId, Long friendId) {
+        jdbcTemplate.update(ADD_FRIENDSHIP_SQL, userId, friendId, true);
     }
 
-    public List<Long> getFriends(Long userId) {
-        return jdbcTemplate.queryForList(GET_FRIENDS_SQL, Long.class, userId);
+    public Friendship getFriends(Long userId) {
+        List<Long> friendsId = jdbcTemplate.queryForList(GET_FRIENDS_SQL, Long.class, userId);
+        return new Friendship(userId, friendsId);
     }
 
-    public void confirmFriendship(Long userId, Long friendId) {
-        jdbcTemplate.update(CONFIRM_FRIENDSHIP_SQL, userId, friendId, friendId, userId);
+    public List<Long> getCommonFriends(Long id, Long otherId) {
+        return jdbcTemplate.queryForList(GET_COMMON_FRIENDS_SQL, Long.class, id, otherId);
     }
 
     public void removeFriendship(Long userId, Long friendId) {
