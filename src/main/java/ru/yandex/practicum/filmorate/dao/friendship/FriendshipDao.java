@@ -27,13 +27,14 @@ public class FriendshipDao {
     private static final String CONFIRM_FRIENDSHIP_SQL = """
             UPDATE friendship
             SET is_confirmed = true
-            WHERE user_id = ? AND friend_id = ?;
+            WHERE (user_id = ? AND friend_id = ?)
+               OR (user_id = ? AND friend_id = ?);
             """;
 
     private static final String REMOVE_FRIENDSHIP_SQL = """
             DELETE FROM friendship
-            WHERE user_id = ? AND friend_id = ?
-            OR user_id = ? AND friend_id = ?;
+            WHERE (user_id = ? AND friend_id = ?)
+            OR (user_id = ? AND friend_id = ?);
             """;
 
     private final JdbcTemplate jdbcTemplate;
@@ -47,7 +48,7 @@ public class FriendshipDao {
     }
 
     public void confirmFriendship(Long userId, Long friendId) {
-        jdbcTemplate.update(CONFIRM_FRIENDSHIP_SQL, userId, friendId);
+        jdbcTemplate.update(CONFIRM_FRIENDSHIP_SQL, userId, friendId, friendId, userId);
     }
 
     public void removeFriendship(Long userId, Long friendId) {
