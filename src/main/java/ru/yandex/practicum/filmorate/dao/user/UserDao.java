@@ -14,12 +14,4 @@ public interface UserDao {
     List<User> getUsers();
 
     User updateUser(User user);
-
-    void addFriend(Long id, Long friendId);
-
-    void removeFriend(Long id, Long friendId);
-
-    List<User> getFriends(Long id);
-
-    List<User> getCommonFriends(Long id, Long otherId);
 }
