@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Likes {
 
-    private Long film_id;
+    private Long filmId;
 
-    private Long user_id;
+    private Long userId;
 }
