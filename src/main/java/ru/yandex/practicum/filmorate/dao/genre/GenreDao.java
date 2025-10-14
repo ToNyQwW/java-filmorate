@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dao.Genre;
+package ru.yandex.practicum.filmorate.dao.genre;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
