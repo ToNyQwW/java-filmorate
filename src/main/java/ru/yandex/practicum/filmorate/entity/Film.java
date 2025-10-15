@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.validation.minReleaseDate.MinReleaseDate;
@@ -11,6 +12,7 @@ import ru.yandex.practicum.filmorate.validation.minReleaseDate.MinReleaseDate;
 import java.time.LocalDate;
 
 @Data
+@Builder
 @EqualsAndHashCode(of = "id")
 public class Film {
 

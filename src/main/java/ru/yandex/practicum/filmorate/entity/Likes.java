@@ -11,5 +11,5 @@ public class Likes {
 
     private Long filmId;
 
-    private List<Long> userId;
+    private List<Long> usersId;
 }

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.entity.Film;
-import ru.yandex.practicum.filmorate.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.dao.film.FilmDao;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import java.util.List;
 @Service
 public class FilmServiceImpl implements FilmService {
 
-    private final FilmStorage filmStorage;
+    private final FilmDao filmStorage;
 
     @Autowired
-    public FilmServiceImpl(FilmStorage filmStorage) {
+    public FilmServiceImpl(FilmDao filmStorage) {
         this.filmStorage = filmStorage;
     }
 
