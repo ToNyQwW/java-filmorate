@@ -144,7 +144,8 @@ public class UserDaoImpl implements UserDao {
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
-                user.getBirthday());
+                user.getBirthday(),
+                user.getId());
 
         return user;
     }
