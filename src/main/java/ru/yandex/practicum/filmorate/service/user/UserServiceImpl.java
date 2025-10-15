@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
+        normalize(user);
         var createdUser = userDao.createUser(user);
         log.info("User created: {}", createdUser);
         return createdUser;
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) throws NotFoundException {
         try {
+            normalize(user);
             var updatedUser = userDao.updateUser(user);
             log.info("User updated: {}", updatedUser);
             return updatedUser;
