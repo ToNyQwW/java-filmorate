@@ -10,6 +10,8 @@ import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.validation.minReleaseDate.MinReleaseDate;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -32,9 +34,9 @@ public class Film {
     @Positive
     private int duration;
 
-    private Likes likes;
+    private Set<Long> likes;
 
-    private FilmGenres filmGenres;
+    private List<Genre> genres;
 
     private Mpa mpa;
 }

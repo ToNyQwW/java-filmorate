@@ -6,12 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.entity.Friendship;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -59,25 +55,29 @@ public class FriendshipDaoImpl implements FriendshipDao {
     }
 
     @Override
-    public Friendship getFriends(Long userId) {
+    public Set<Long> getFriends(Long userId) {
         List<Long> friendsId = jdbcTemplate.queryForList(GET_FRIENDS_BY_ID_SQL, Long.class, userId);
-        return new Friendship(userId, friendsId);
+        return new HashSet<>(friendsId);
     }
 
     @Override
-    public Map<Long, Friendship> getFriendsByUserIds(List<Long> userIds) {
+    public Map<Long, Set<Long>> getFriendsByUserIds(List<Long> userIds) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userIds", userIds);
 
         return namedParameterJdbcTemplate.query(GET_FRIENDS_BY_LIST_IDS_SQL, params, rs -> {
-            Map<Long, Friendship> result = new HashMap<>();
+            Map<Long, Set<Long>> result = new HashMap<>();
 
             while (rs.next()) {
                 Long userId = rs.getLong("user_id");
                 Long friendId = rs.getLong("friend_id");
 
-                result.computeIfAbsent(userId, value -> new Friendship(userId, new ArrayList<>()))
-                        .getFriendsId().add(friendId);
+                result.computeIfAbsent(userId, key -> new HashSet<>()).add(friendId);
+            }
+
+            //TODO надо-ли
+            for (Long id : userIds) {
+                result.putIfAbsent(id, new HashSet<>());
             }
 
             return result;

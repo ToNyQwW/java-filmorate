@@ -1,17 +1,16 @@
 package ru.yandex.practicum.filmorate.dao.friendship;
 
-import ru.yandex.practicum.filmorate.entity.Friendship;
-
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface FriendshipDao {
 
     void addFriend(Long userId, Long friendId);
 
-    Friendship getFriends(Long userId);
+    Set<Long> getFriends(Long userId);
 
-    Map<Long, Friendship> getFriendsByUserIds(List<Long> userIds);
+    Map<Long, Set<Long>> getFriendsByUserIds(List<Long> userIds);
 
     List<Long> getCommonFriends(Long id, Long otherId);
 

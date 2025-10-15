@@ -6,12 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.entity.Likes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -60,27 +56,35 @@ public class LikesDaoImpl implements LikesDao {
     }
 
     @Override
-    public Likes getFilmLikes(Long filmId) {
+    public Set<Long> getFilmLikes(Long filmId) {
         List<Long> userIds = jdbcTemplate.query(GET_LIKES_BY_FILM_ID_SQL,
                 (rs, rowNum) -> rs.getLong("user_id"),
                 filmId);
-        return new Likes(filmId, userIds);
+        return new HashSet<>(userIds);
     }
 
     @Override
-    public Map<Long, Likes> getUserLikesByFilmIds(List<Long> filmsIds) {
+    public Map<Long, Set<Long>> getUserLikesByFilmIds(List<Long> filmsIds) {
+        if (filmsIds == null || filmsIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("filmsIds", filmsIds);
 
         return namedParameterJdbcTemplate.query(GET_USER_IDS_BY_FILM_IDS_SQL, params, rs -> {
-            Map<Long, Likes> result = new HashMap<>();
+            Map<Long, Set<Long>> result = new HashMap<>();
 
             while (rs.next()) {
                 var filmId = rs.getLong("film_id");
                 var userId = rs.getLong("user_id");
 
-                result.computeIfAbsent(filmId, value -> new Likes(filmId, new ArrayList<>()))
-                        .getUsersId().add(userId);
+                result.computeIfAbsent(filmId, key -> new HashSet<>()).add(userId);
+            }
+
+            //TODO ??? надо ли
+            for (Long id : filmsIds) {
+                result.putIfAbsent(id, new HashSet<>());
             }
 
             return result;

@@ -1,12 +1,15 @@
 package ru.yandex.practicum.filmorate.entity;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
+@Builder
 @EqualsAndHashCode(of = "id")
 public class User {
 
@@ -25,5 +28,5 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    private Friendship friends;
+    private Set<Long> friends;
 }
