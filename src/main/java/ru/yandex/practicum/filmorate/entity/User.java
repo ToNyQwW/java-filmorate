@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

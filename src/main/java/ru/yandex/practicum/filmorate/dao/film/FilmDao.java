@@ -16,5 +16,4 @@ public interface FilmDao {
     List<Film> getPopularFilms(Long count);
 
     Film updateFilm(Film film);
-
 }
