@@ -1,35 +1,34 @@
 package ru.yandex.practicum.filmorate.service.user;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.entity.User;
+import ru.yandex.practicum.filmorate.dao.friendship.FriendshipDao;
 import ru.yandex.practicum.filmorate.dao.user.UserDao;
+import ru.yandex.practicum.filmorate.entity.User;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userStorage;
+    private final UserDao userDao;
 
-    @Autowired
-    public UserServiceImpl(UserDao userStorage) {
-        this.userStorage = userStorage;
-    }
+    private final FriendshipDao friendshipDao;
 
     @Override
     public User createUser(User user) {
-        var createdUser = userStorage.createUser(user);
+        var createdUser = userDao.createUser(user);
         log.info("User created: {}", createdUser);
         return createdUser;
     }
 
     @Override
     public User getUser(Long id) throws NotFoundException {
-        var user = userStorage.getUser(id);
+        var user = userDao.getUser(id);
         if (user.isPresent()) {
             var findedUser = user.get();
             log.info("User found: {}", findedUser);
@@ -41,15 +40,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsers() {
-        var users = userStorage.getUsers();
-        log.info("Number of users found: {}", users);
+        var users = userDao.getAllUsers();
+        log.info("Number of users found: {}", users.size());
         return users;
     }
 
     @Override
     public User updateUser(User user) throws NotFoundException {
         try {
-            var updatedUser = userStorage.updateUser(user);
+            var updatedUser = userDao.updateUser(user);
             log.info("User updated: {}", updatedUser);
             return updatedUser;
         } catch (Exception e) {
@@ -61,7 +60,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addFriend(Long id, Long friendId) throws NotFoundException {
         try {
-            userStorage.addFriend(id, friendId);
+            friendshipDao.addFriend(id, friendId);
             log.info("Friend added: {}", friendId);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -72,7 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void removeFriend(Long id, Long friendId) throws NotFoundException {
         try {
-            userStorage.removeFriend(id, friendId);
+            friendshipDao.removeFriend(id, friendId);
             log.info("Friend removed: {}", friendId);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -83,9 +82,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getFriends(Long id) throws NotFoundException {
         try {
-            var friends = userStorage.getFriends(id);
-            log.info("Number of friends found: {}", friends);
-            return friends;
+            var friends = friendshipDao.getFriends(id);
+            log.info("Number of friends found: {}", friends.getFriendsId().size());
+            return userDao.getUsersByIds(friends.getFriendsId());
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;
@@ -95,9 +94,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getCommonFriends(Long id, Long otherId) throws NotFoundException {
         try {
-            var commonFriends = userStorage.getCommonFriends(id, otherId);
-            log.info("Number of common friends found: {}", commonFriends);
-            return commonFriends;
+            var commonFriends = friendshipDao.getCommonFriends(id, otherId);
+            log.info("Number of common friends found: {}", commonFriends.size());
+            return userDao.getUsersByIds(commonFriends);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;

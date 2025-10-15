@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface FriendshipDao {
 
-    void addFriendship(Long userId, Long friendId);
+    void addFriend(Long userId, Long friendId);
 
     Friendship getFriends(Long userId);
 
@@ -15,5 +15,5 @@ public interface FriendshipDao {
 
     List<Long> getCommonFriends(Long id, Long otherId);
 
-    void removeFriendship(Long userId, Long friendId);
+    void removeFriend(Long userId, Long friendId);
 }

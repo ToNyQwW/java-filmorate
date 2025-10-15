@@ -11,7 +11,9 @@ public interface UserDao {
 
     Optional<User> getUser(Long id);
 
-    List<User> getUsers();
+    List<User> getUsersByIds(List<Long> ids);
+
+    List<User> getAllUsers();
 
     User updateUser(User user);
 }

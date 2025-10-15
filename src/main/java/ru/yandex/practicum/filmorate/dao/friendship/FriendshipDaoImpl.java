@@ -54,7 +54,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public void addFriendship(Long userId, Long friendId) {
+    public void addFriend(Long userId, Long friendId) {
         jdbcTemplate.update(ADD_FRIENDSHIP_SQL, userId, friendId, true);
     }
 
@@ -90,7 +90,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
     }
 
     @Override
-    public void removeFriendship(Long userId, Long friendId) {
+    public void removeFriend(Long userId, Long friendId) {
         jdbcTemplate.update(REMOVE_FRIENDSHIP_SQL, userId, friendId, friendId, userId);
     }
 }

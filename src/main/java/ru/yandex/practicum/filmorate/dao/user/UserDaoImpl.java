@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -36,6 +38,16 @@ public class UserDaoImpl implements UserDao {
             WHERE user_id = ?
             """;
 
+    private static final String GET_USERS_BY_LIST_IDS_SQL = """
+            SELECT user_id AS id,
+                   email,
+                   login,
+                   name,
+                   birthday
+            FROM users
+            WHERE user_id IN (:userIds)
+            """;
+
     private static final String GET_ALL_USERS_SQL = """
             SELECT user_id AS id,
                    email,
@@ -57,6 +69,8 @@ public class UserDaoImpl implements UserDao {
     private static final RowMapper<User> USER_ROW_MAPPER = new BeanPropertyRowMapper<>(User.class);
 
     private final JdbcTemplate jdbcTemplate;
+
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final FriendshipDao friendshipDao;
 
@@ -94,10 +108,26 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getUsersByIds(List<Long> ids) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userIds", ids);
+
+        var users = namedParameterJdbcTemplate.query(GET_USERS_BY_LIST_IDS_SQL, params, USER_ROW_MAPPER);
+
+        return buildUsers(users);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
         var users = jdbcTemplate.query(GET_ALL_USERS_SQL, USER_ROW_MAPPER);
+
+        return buildUsers(users);
+    }
+
+    private List<User> buildUsers(List<User> users) {
         var userIds = users.stream()
                 .map(User::getId).toList();
+
         var friendsByUserIds = friendshipDao.getFriendsByUserIds(userIds);
 
         for (User user : users) {
