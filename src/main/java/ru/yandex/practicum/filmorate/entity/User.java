@@ -26,6 +26,5 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    @JsonIgnore
     private Friendship friends;
 }
