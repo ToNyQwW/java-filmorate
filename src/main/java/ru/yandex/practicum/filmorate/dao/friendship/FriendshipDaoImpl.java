@@ -55,29 +55,28 @@ public class FriendshipDaoImpl implements FriendshipDao {
     }
 
     @Override
-    public Set<Long> getFriends(Long userId) {
-        List<Long> friendsId = jdbcTemplate.queryForList(GET_FRIENDS_BY_ID_SQL, Long.class, userId);
-        return new HashSet<>(friendsId);
+    public List<Long> getFriends(Long userId) {
+        return jdbcTemplate.queryForList(GET_FRIENDS_BY_ID_SQL, Long.class, userId);
     }
 
     @Override
-    public Map<Long, Set<Long>> getFriendsByUserIds(List<Long> userIds) {
+    public Map<Long, List<Long>> getFriendsByUserIds(List<Long> userIds) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userIds", userIds);
 
         return namedParameterJdbcTemplate.query(GET_FRIENDS_BY_LIST_IDS_SQL, params, rs -> {
-            Map<Long, Set<Long>> result = new HashMap<>();
+            Map<Long, List<Long>> result = new HashMap<>();
 
             while (rs.next()) {
                 Long userId = rs.getLong("user_id");
                 Long friendId = rs.getLong("friend_id");
 
-                result.computeIfAbsent(userId, key -> new HashSet<>()).add(friendId);
+                result.computeIfAbsent(userId, value -> new ArrayList<>()).add(friendId);
             }
 
             //TODO надо-ли
             for (Long id : userIds) {
-                result.putIfAbsent(id, new HashSet<>());
+                result.putIfAbsent(id, new ArrayList<>());
             }
 
             return result;

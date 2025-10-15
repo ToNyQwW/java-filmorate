@@ -85,8 +85,8 @@ public class UserServiceImpl implements UserService {
     public List<User> getFriends(Long id) throws NotFoundException {
         try {
             var friends = friendshipDao.getFriends(id);
-            log.info("Number of friends found: {}", friends.getFriendsId().size());
-            return userDao.getUsersByIds(friends.getFriendsId());
+            log.info("Number of friends found: {}", friends.size());
+            return userDao.getUsersByIds(friends);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;

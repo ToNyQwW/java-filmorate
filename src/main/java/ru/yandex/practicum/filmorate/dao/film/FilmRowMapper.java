@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.entity.Film;
+import ru.yandex.practicum.filmorate.entity.Mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +19,10 @@ public class FilmRowMapper implements RowMapper<Film> {
 
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-        var mpa = mpaDao.getMpaById(rs.getLong("mpa_id"));
+        var mpa = Mpa.builder()
+                .id(rs.getLong("mpa_id"))
+                .name(rs.getString("mpa_name"))
+                .build();
 
         return Film.builder()
                 .id(rs.getLong("film_id"))

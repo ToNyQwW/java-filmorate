@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.dao.filmGenre;
 
-import ru.yandex.practicum.filmorate.entity.FilmGenres;
+import ru.yandex.practicum.filmorate.entity.Genre;
 
 import java.util.List;
 import java.util.Map;
 
 public interface FilmGenreDao {
 
-    FilmGenres getFilmGenres(Long filmId);
+    List<Genre> getFilmGenres(Long filmId);
 
-    Map<Long, FilmGenres> getFilmsGenresByListFilmIds(List<Long> filmIds);
+    Map<Long, List<Genre>> getFilmsGenresByListFilmIds(List<Long> filmIds);
 }

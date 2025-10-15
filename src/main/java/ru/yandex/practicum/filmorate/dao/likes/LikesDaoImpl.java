@@ -56,15 +56,15 @@ public class LikesDaoImpl implements LikesDao {
     }
 
     @Override
-    public Set<Long> getFilmLikes(Long filmId) {
+    public List<Long> getFilmLikes(Long filmId) {
         List<Long> userIds = jdbcTemplate.query(GET_LIKES_BY_FILM_ID_SQL,
                 (rs, rowNum) -> rs.getLong("user_id"),
                 filmId);
-        return new HashSet<>(userIds);
+        return new ArrayList<>(userIds);
     }
 
     @Override
-    public Map<Long, Set<Long>> getUserLikesByFilmIds(List<Long> filmsIds) {
+    public Map<Long, List<Long>> getUserLikesByFilmIds(List<Long> filmsIds) {
         if (filmsIds == null || filmsIds.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -73,18 +73,18 @@ public class LikesDaoImpl implements LikesDao {
                 .addValue("filmsIds", filmsIds);
 
         return namedParameterJdbcTemplate.query(GET_USER_IDS_BY_FILM_IDS_SQL, params, rs -> {
-            Map<Long, Set<Long>> result = new HashMap<>();
+            Map<Long, List<Long>> result = new HashMap<>();
 
             while (rs.next()) {
                 var filmId = rs.getLong("film_id");
                 var userId = rs.getLong("user_id");
 
-                result.computeIfAbsent(filmId, key -> new HashSet<>()).add(userId);
+                result.computeIfAbsent(filmId, value -> new ArrayList<>()).add(userId);
             }
 
             //TODO ??? надо ли
             for (Long id : filmsIds) {
-                result.putIfAbsent(id, new HashSet<>());
+                result.putIfAbsent(id, new ArrayList<>());
             }
 
             return result;

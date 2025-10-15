@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -28,5 +29,5 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    private Set<Long> friends;
+    private List<Long> friends;
 }

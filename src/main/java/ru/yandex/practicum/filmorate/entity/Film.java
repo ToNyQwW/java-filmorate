@@ -34,7 +34,7 @@ public class Film {
     @Positive
     private int duration;
 
-    private Set<Long> likes;
+    private List<Long> likes;
 
     private List<Genre> genres;
 
