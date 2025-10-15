@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.dao.film;
 
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -26,7 +28,7 @@ public class FilmDaoImpl implements FilmDao {
             """;
 
     private static final String GET_FILM_SQL = """
-            SELECT film_id AS id,
+            SELECT film_id,
                    name,
                    description,
                    release_date,
@@ -37,13 +39,24 @@ public class FilmDaoImpl implements FilmDao {
             """;
 
     private static final String GET_ALL_FILMS_SQL = """
-            SELECT film_id AS id,
+            SELECT film_id,
                    name,
                    description,
                    release_date,
                    duration,
                    mpa_id
             FROM film
+            """;
+
+    private static final String GET_FILMS_BY_LIST_IDS_SQL = """
+             SELECT film_id,
+                    name,
+                    description,
+                    release_date,
+                    duration,
+                    mpa_id
+            FROM film
+            WHERE film_id IN (:filmsIds)
             """;
 
     private static final String UPDATE_FILM_SQL = """
@@ -63,6 +76,8 @@ public class FilmDaoImpl implements FilmDao {
     private final FilmGenreDao filmGenreDao;
 
     private final JdbcTemplate jdbcTemplate;
+
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public Film addFilm(Film film) {
@@ -105,6 +120,22 @@ public class FilmDaoImpl implements FilmDao {
     public List<Film> getFilms() {
         var films = jdbcTemplate.query(GET_ALL_FILMS_SQL, filmRowMapper);
 
+        return buildFilms(films);
+    }
+
+    @Override
+    public List<Film> getPopularFilms(Long count) {
+        var popularFilmIds = likesDao.getPopularFilmIds(count);
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("filmsIds", popularFilmIds);
+
+        var films = namedParameterJdbcTemplate.query(GET_FILMS_BY_LIST_IDS_SQL, params, filmRowMapper);
+
+        return buildFilms(films);
+    }
+
+    private List<Film> buildFilms(List<Film> films) {
         var filmsIds = films.stream().map(Film::getId).toList();
         var userLikes = likesDao.getUserLikesByFilmIds(filmsIds);
         var filmsGenres = filmGenreDao.getFilmsGenresByListFilmIds(filmsIds);
