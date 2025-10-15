@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.user;
 
 import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -11,6 +9,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.friendship.FriendshipDao;
 import ru.yandex.practicum.filmorate.entity.User;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -66,7 +65,7 @@ public class UserDaoImpl implements UserDao {
             WHERE user_id = ?
             """;
 
-    private static final RowMapper<User> USER_ROW_MAPPER = new BeanPropertyRowMapper<>(User.class);
+    private final UserRowMapper userRowMapper;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -96,7 +95,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> getUser(Long id) {
-        var user = jdbcTemplate.queryForObject(GET_USER_SQL, USER_ROW_MAPPER, id);
+        var user = jdbcTemplate.queryForObject(GET_USER_SQL, userRowMapper, id);
 
         var friends = friendshipDao.getFriends(id);
 
@@ -112,14 +111,14 @@ public class UserDaoImpl implements UserDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userIds", ids);
 
-        var users = namedParameterJdbcTemplate.query(GET_USERS_BY_LIST_IDS_SQL, params, USER_ROW_MAPPER);
+        var users = namedParameterJdbcTemplate.query(GET_USERS_BY_LIST_IDS_SQL, params, userRowMapper);
 
         return buildUsers(users);
     }
 
     @Override
     public List<User> getAllUsers() {
-        var users = jdbcTemplate.query(GET_ALL_USERS_SQL, USER_ROW_MAPPER);
+        var users = jdbcTemplate.query(GET_ALL_USERS_SQL, userRowMapper);
 
         return buildUsers(users);
     }
@@ -140,13 +139,17 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User updateUser(User user) {
-        jdbcTemplate.update(UPDATE_USER_SQL,
+        var id = user.getId();
+        var update = jdbcTemplate.update(UPDATE_USER_SQL,
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
                 user.getBirthday(),
-                user.getId());
+                id);
 
+        if (update == 0) {
+            throw new NotFoundException("User with id " + id + " not found");
+        }
         return user;
     }
 }

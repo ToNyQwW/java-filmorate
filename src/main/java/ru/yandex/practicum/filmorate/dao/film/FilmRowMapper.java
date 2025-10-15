@@ -15,8 +15,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class FilmRowMapper implements RowMapper<Film> {
 
-    private final MpaDao mpaDao;
-
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
         var mpa = Mpa.builder()
