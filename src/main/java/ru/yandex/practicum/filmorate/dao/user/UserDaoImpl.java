@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.user;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -95,14 +96,13 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> getUser(Long id) {
-        var user = jdbcTemplate.queryForObject(GET_USER_SQL, userRowMapper, id);
-
-        var friends = friendshipDao.getFriends(id);
+        var users = jdbcTemplate.query(GET_USER_SQL, userRowMapper, id);
+        User user = DataAccessUtils.singleResult(users);
 
         if (user != null) {
+            var friends = friendshipDao.getFriends(id);
             user.setFriends(friends);
         }
-
         return Optional.ofNullable(user);
     }
 

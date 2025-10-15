@@ -7,7 +7,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -15,34 +18,33 @@ public class FriendshipDaoImpl implements FriendshipDao {
 
     private static final String ADD_FRIENDSHIP_SQL = """
             INSERT INTO friendship
-                (user_id, friend_id, is_confirmed)
-            VALUES (?, ?, ?)
+                (user_id, friend_id)
+            VALUES (?, ?)
             """;
 
     private static final String GET_FRIENDS_BY_ID_SQL = """
             SELECT friend_id
             FROM friendship
-            WHERE user_id = ? AND is_confirmed = true;
+            WHERE user_id = ?
             """;
 
     private static final String GET_FRIENDS_BY_LIST_IDS_SQL = """
             SELECT user_id,
                  friend_id
             FROM friendship
-            WHERE user_id IN (:userIds) AND is_confirmed = true;
+            WHERE user_id IN (:userIds)
             """;
 
     private static final String REMOVE_FRIENDSHIP_SQL = """
             DELETE FROM friendship
-            WHERE (user_id = ? AND friend_id = ?)
-            OR (user_id = ? AND friend_id = ?);
+            WHERE user_id = ? AND friend_id = ?
             """;
 
     private static final String GET_COMMON_FRIENDS_SQL = """
             SELECT f1.friend_id
             FROM friendship f1
             INNER JOIN friendship f2 ON f1.friend_id = f2.friend_id
-            WHERE f1.user_id = ? AND f2.user_id = ?;
+            WHERE f1.user_id = ? AND f2.user_id = ?
             """;
 
     private final JdbcTemplate jdbcTemplate;
@@ -51,7 +53,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
 
     @Override
     public void addFriend(Long userId, Long friendId) {
-        jdbcTemplate.update(ADD_FRIENDSHIP_SQL, userId, friendId, true);
+        jdbcTemplate.update(ADD_FRIENDSHIP_SQL, userId, friendId);
     }
 
     @Override
@@ -73,12 +75,6 @@ public class FriendshipDaoImpl implements FriendshipDao {
 
                 result.computeIfAbsent(userId, value -> new ArrayList<>()).add(friendId);
             }
-
-            //TODO надо-ли
-            for (Long id : userIds) {
-                result.putIfAbsent(id, new ArrayList<>());
-            }
-
             return result;
         });
     }
@@ -90,6 +86,6 @@ public class FriendshipDaoImpl implements FriendshipDao {
 
     @Override
     public void removeFriend(Long userId, Long friendId) {
-        jdbcTemplate.update(REMOVE_FRIENDSHIP_SQL, userId, friendId, friendId, userId);
+        jdbcTemplate.update(REMOVE_FRIENDSHIP_SQL, userId, friendId);
     }
 }
