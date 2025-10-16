@@ -9,19 +9,23 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.entity.Genre;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmGenreDaoImpl implements FilmGenreDao {
 
+    private static final String ADD_FILM_GENRES_SQL = """
+            INSERT INTO film_genre
+            (film_id, genre_id)
+            values (?, ?)
+            """;
+
     private static final String GET_FILM_GENRES_SQL = """
                     SELECT genre_id
                     FROM film_genre
                     WHERE film_id = ?
+                    ORDER BY genre_id
             """;
 
     private static final String GET_FILMS_GENRES_BY_LIST_FILMS_IDS_SQL = """
@@ -29,17 +33,23 @@ public class FilmGenreDaoImpl implements FilmGenreDao {
                           genre_id
                     FROM film_genre
                     WHERE film_id IN (:filmsIds)
+                    ORDER BY film_id, genre_id
             """;
 
-    private final JdbcTemplate jdbcTemplate;
-
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+    private final JdbcTemplate jdbcTemplate;
     private final GenreDao genreDao;
+
+    public void addFilmGenres(Long filmId, Set<Genre> genres) {
+        for (Genre genre : genres) {
+            jdbcTemplate.update(ADD_FILM_GENRES_SQL, filmId, genre.getId());
+        }
+    }
 
     @Override
     public List<Genre> getFilmGenres(Long filmId) {
-        List<Long> genreIds = jdbcTemplate.query(GET_FILM_GENRES_SQL, (rs, rowNum) -> rs.getLong("genre_id"), filmId);
+        List<Long> genreIds = jdbcTemplate.query(GET_FILM_GENRES_SQL,
+                (rs, rowNum) -> rs.getLong("genre_id"), filmId);
 
         return genreDao.getGenresByListId(genreIds);
     }

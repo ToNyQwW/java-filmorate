@@ -11,16 +11,12 @@ import ru.yandex.practicum.filmorate.dao.filmGenre.FilmGenreDao;
 import ru.yandex.practicum.filmorate.dao.likes.LikesDao;
 import ru.yandex.practicum.filmorate.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.entity.Film;
-import ru.yandex.practicum.filmorate.entity.Mpa;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @AllArgsConstructor
@@ -119,9 +115,8 @@ public class FilmDaoImpl implements FilmDao {
             return Optional.empty();
         }
         var filmLikes = likesDao.getFilmLikes(filmId);
-        film.setLikes(filmLikes != null ? filmLikes : Collections.emptyList());
-
-        film.setGenres(filmGenreDao.getFilmGenres(filmId));
+        film.setLikes(new LinkedHashSet<>(filmLikes));
+        film.setGenres(new LinkedHashSet<>(filmGenreDao.getFilmGenres(filmId)));
 
         return Optional.of(film);
     }
@@ -160,8 +155,8 @@ public class FilmDaoImpl implements FilmDao {
 
         for (Film film : films) {
             var id = film.getId();
-            film.setLikes(userLikes.get(id));
-            film.setGenres(filmsGenres.get(id));
+            film.setLikes(new LinkedHashSet<>(userLikes.get(id)));
+            film.setGenres(new LinkedHashSet<>(filmsGenres.get(id)));
         }
         return films;
     }

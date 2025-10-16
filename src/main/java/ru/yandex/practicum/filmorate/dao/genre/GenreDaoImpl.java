@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.dao.genre;
 
 import lombok.AllArgsConstructor;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -11,29 +10,31 @@ import ru.yandex.practicum.filmorate.entity.Genre;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @AllArgsConstructor
 public class GenreDaoImpl implements GenreDao {
 
     private static final String GET_GENRES_SQL = """
-                    SELECT genre_id as id,
+                    SELECT genre_id,
                            name
                     FROM genre
             """;
 
     private static final String GET_GENRE_BY_ID_SQL = """
-                    SELECT genre_id as id,
+                    SELECT genre_id,
                            name
                     FROM genre
                     WHERE genre_id = ?
             """;
 
     private static final String GET_GENRES_BY_IDS_SQL = """
-                    SELECT genre_id as id,
+                    SELECT genre_id,
                            name
                     FROM genre
                     WHERE genre_id IN (:ids)
+                    ORDER BY genre_id
             """;
 
     private final GenreRowMapper genreRowMapper;
@@ -59,7 +60,6 @@ public class GenreDaoImpl implements GenreDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ids", ids);
 
-        return namedParameterJdbcTemplate.query(GET_GENRES_BY_IDS_SQL, params,
-                new BeanPropertyRowMapper<>(Genre.class));
+        return namedParameterJdbcTemplate.query(GET_GENRES_BY_IDS_SQL, params, genreRowMapper);
     }
 }

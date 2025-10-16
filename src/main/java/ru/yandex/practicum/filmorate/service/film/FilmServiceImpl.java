@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.film.FilmDao;
+import ru.yandex.practicum.filmorate.dao.filmGenre.FilmGenreDao;
 import ru.yandex.practicum.filmorate.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.dao.likes.LikesDao;
 import ru.yandex.practicum.filmorate.dao.mpa.MpaDao;
@@ -28,15 +29,27 @@ public class FilmServiceImpl implements FilmService {
 
     private final GenreDao genreDao;
 
-    @Override
+    private final FilmGenreDao filmGenreDao;
+
     public Film addFilm(Film film) {
         throwIfMpaIdNotExists(film.getMpa().getId());
-        for (var genre : film.getGenres()) {
-            throwIfGenreIdNotExists(genre.getId());
+        if (film.getGenres() != null) {
+            for (var genre : film.getGenres()) {
+                throwIfGenreIdNotExists(genre.getId());
+            }
         }
+
         var addedFilm = filmDao.addFilm(film);
-        log.info("Film added: {}", film);
-        return addedFilm;
+
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            filmGenreDao.addFilmGenres(addedFilm.getId(), film.getGenres());
+        }
+
+        var fullFilm = filmDao.getFilm(addedFilm.getId())
+                .orElseThrow(() -> new NotFoundException("Film with id " + addedFilm.getId() + " not found"));
+
+        log.info("Film added: {}", fullFilm);
+        return fullFilm;
     }
 
     @Override

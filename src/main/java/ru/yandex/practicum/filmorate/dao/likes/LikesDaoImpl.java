@@ -57,10 +57,9 @@ public class LikesDaoImpl implements LikesDao {
 
     @Override
     public List<Long> getFilmLikes(Long filmId) {
-        List<Long> userIds = jdbcTemplate.query(GET_LIKES_BY_FILM_ID_SQL,
+        return jdbcTemplate.query(GET_LIKES_BY_FILM_ID_SQL,
                 (rs, rowNum) -> rs.getLong("user_id"),
                 filmId);
-        return new ArrayList<>(userIds);
     }
 
     @Override
