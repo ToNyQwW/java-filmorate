@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.entity.Mpa;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.List;
 
@@ -22,6 +23,12 @@ public class MpaServiceImpl implements MpaService {
 
     @Override
     public Mpa getMpaById(Long id) {
-        return mpaDao.getMpaById(id);
+        //TODO допилить логику сервиса
+        var mpa = mpaDao.getMpaById(id);
+
+        if (mpa.isEmpty()) {
+            throw new NotFoundException("Mpa with id " + id + " not found");
+        }
+        return mpa.get();
     }
 }

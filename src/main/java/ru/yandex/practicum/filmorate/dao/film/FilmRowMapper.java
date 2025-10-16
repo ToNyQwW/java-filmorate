@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.film;
 
-import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.entity.Film;
 import ru.yandex.practicum.filmorate.entity.Mpa;
 
@@ -12,7 +10,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 @Component
-@AllArgsConstructor
 public class FilmRowMapper implements RowMapper<Film> {
 
     @Override

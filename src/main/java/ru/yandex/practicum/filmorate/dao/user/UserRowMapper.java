@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.dao.user;
 
-import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.entity.User;
@@ -10,7 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 @Component
-@AllArgsConstructor
 public class UserRowMapper implements RowMapper<User> {
 
     @Override

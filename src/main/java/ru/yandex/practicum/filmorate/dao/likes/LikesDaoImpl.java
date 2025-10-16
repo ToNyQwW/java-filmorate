@@ -38,7 +38,7 @@ public class LikesDaoImpl implements LikesDao {
                     SELECT film_id,
                            user_id
                     FROM likes
-                    WHERE film_id IN (:filmIds)
+                    WHERE film_id IN (:filmsIds)
             """;
 
     private static final String REMOVE_LIKE_SQL = """
@@ -93,7 +93,15 @@ public class LikesDaoImpl implements LikesDao {
 
     @Override
     public List<Long> getPopularFilmIds(Long count) {
-        return jdbcTemplate.queryForList(GET_POPULAR_FILMS_ID_SQL, Long.class, count);
+        return jdbcTemplate.query(GET_POPULAR_FILMS_ID_SQL, rs -> {
+            List<Long> result = new ArrayList<>();
+
+            while (rs.next()) {
+                var filmId = rs.getLong("filmId");
+                result.add(filmId);
+            }
+            return result;
+        }, count);
     }
 
     @Override

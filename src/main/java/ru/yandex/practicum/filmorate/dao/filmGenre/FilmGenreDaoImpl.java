@@ -57,7 +57,7 @@ public class FilmGenreDaoImpl implements FilmGenreDao {
                 var genreId = rs.getLong("genre_id");
 
                 result.computeIfAbsent(filmId, value -> new ArrayList<>())
-                        .add(genreDao.getGenreById(genreId));
+                        .add(genreDao.getGenreById(genreId).get());
             }
 
             return result;

@@ -1,16 +1,16 @@
 package ru.yandex.practicum.filmorate.dao.mpa;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import lombok.AllArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.entity.Mpa;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@AllArgsConstructor
 public class MpaDaoImpl implements MpaDao {
 
     private static final String GET_MPA_SQL = """
@@ -28,13 +28,17 @@ public class MpaDaoImpl implements MpaDao {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final MpaRowMapper mpaRowMapper;
+
     @Override
     public List<Mpa> getAllMpa() {
-        return jdbcTemplate.query(GET_MPA_SQL, new BeanPropertyRowMapper<>(Mpa.class));
+        return jdbcTemplate.query(GET_MPA_SQL, mpaRowMapper);
     }
 
     @Override
-    public Mpa getMpaById(Long id) {
-        return jdbcTemplate.queryForObject(GET_MPA_BY_ID_SQL, new BeanPropertyRowMapper<>(Mpa.class), id);
+    public Optional<Mpa> getMpaById(Long id) {
+        var result = jdbcTemplate.query(GET_MPA_BY_ID_SQL, mpaRowMapper, id);
+        var mpa = DataAccessUtils.singleResult(result);
+        return Optional.ofNullable(mpa);
     }
 }

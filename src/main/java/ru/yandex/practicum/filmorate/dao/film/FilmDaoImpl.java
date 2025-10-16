@@ -9,13 +9,16 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.filmGenre.FilmGenreDao;
 import ru.yandex.practicum.filmorate.dao.likes.LikesDao;
+import ru.yandex.practicum.filmorate.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.entity.Film;
+import ru.yandex.practicum.filmorate.entity.Mpa;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,6 +86,8 @@ public class FilmDaoImpl implements FilmDao {
 
     private final FilmGenreDao filmGenreDao;
 
+    private final MpaDao mpaDao;
+
     private final JdbcTemplate jdbcTemplate;
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -140,8 +145,11 @@ public class FilmDaoImpl implements FilmDao {
                 .addValue("filmsIds", popularFilmIds);
 
         var films = namedParameterJdbcTemplate.query(GET_FILMS_BY_LIST_IDS_SQL, params, filmRowMapper);
+        var builtFilms = buildFilms(films);
 
-        return buildFilms(films);
+        builtFilms.sort(Comparator.comparingInt(f -> popularFilmIds.indexOf(f.getId())));
+
+        return builtFilms;
     }
 
     private List<Film> buildFilms(List<Film> films) {
@@ -164,7 +172,8 @@ public class FilmDaoImpl implements FilmDao {
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
-                film.getMpa().getId());
+                film.getMpa().getId(),
+                film.getId());
 
         if (update == 0) {
             throw new NotFoundException("Film with id " + film.getId() + " not found");

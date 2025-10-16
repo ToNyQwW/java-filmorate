@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.genre;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -10,9 +10,10 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.entity.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@AllArgsConstructor
 public class GenreDaoImpl implements GenreDao {
 
     private static final String GET_GENRES_SQL = """
@@ -35,18 +36,22 @@ public class GenreDaoImpl implements GenreDao {
                     WHERE genre_id IN (:ids)
             """;
 
+    private final GenreRowMapper genreRowMapper;
+
     private final JdbcTemplate jdbcTemplate;
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public List<Genre> getAllGenres() {
-        return jdbcTemplate.query(GET_GENRES_SQL, new BeanPropertyRowMapper<>(Genre.class));
+        return jdbcTemplate.query(GET_GENRES_SQL, genreRowMapper);
     }
 
     @Override
-    public Genre getGenreById(Long id) {
-        return jdbcTemplate.queryForObject(GET_GENRE_BY_ID_SQL, new BeanPropertyRowMapper<>(Genre.class), id);
+    public Optional<Genre> getGenreById(Long id) {
+        var genres = jdbcTemplate.query(GET_GENRE_BY_ID_SQL, genreRowMapper, id);
+        var genre = DataAccessUtils.singleResult(genres);
+        return Optional.ofNullable(genre);
     }
 
     @Override
