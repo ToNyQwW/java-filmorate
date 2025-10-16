@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.entity.User;
@@ -11,17 +11,13 @@ import ru.yandex.practicum.filmorate.service.user.UserService;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
 
     private static final long MIN_ID = 1L;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

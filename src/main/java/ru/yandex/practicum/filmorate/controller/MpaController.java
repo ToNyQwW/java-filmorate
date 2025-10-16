@@ -12,8 +12,8 @@ import ru.yandex.practicum.filmorate.service.mpa.MpaService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mpa")
 @AllArgsConstructor
+@RequestMapping("/mpa")
 public class MpaController {
 
     private static final long MIN_ID = 1L;

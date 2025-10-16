@@ -12,8 +12,8 @@ import ru.yandex.practicum.filmorate.service.genre.GenreService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/genres")
 @AllArgsConstructor
+@RequestMapping("/genres")
 public class GenreController {
 
     private static final long MIN_ID = 1L;
@@ -24,7 +24,6 @@ public class GenreController {
     public List<Genre> getAllGenres() {
         return genreService.getAllGenres();
     }
-
 
     @GetMapping("/{id}")
     public Genre getGenreNameById(@PathVariable("id") @Min(MIN_ID) Long id) {
