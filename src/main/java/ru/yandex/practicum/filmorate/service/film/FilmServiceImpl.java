@@ -64,36 +64,21 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film updateFilm(Film film) {
-        try {
-            var updatedFilm = filmDao.updateFilm(film);
-            log.info("Film updated: {}", updatedFilm);
-            return updatedFilm;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+        var updatedFilm = filmDao.updateFilm(film);
+        log.info("Film updated: {}", updatedFilm);
+        return updatedFilm;
     }
 
     @Override
     public void addLike(Long filmId, Long userId) {
-        try {
-            likesDao.addLike(filmId, userId);
-            log.info("Added like for filmId: {}, userId: {}", filmId, userId);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+        likesDao.addLike(filmId, userId);
+        log.info("Added like for filmId: {}, userId: {}", filmId, userId);
     }
 
     @Override
     public void removeLike(Long filmId, Long userId) {
-        try {
-            likesDao.removeLike(filmId, userId);
-            log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+        likesDao.removeLike(filmId, userId);
+        log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
     }
 
     @Override
@@ -115,7 +100,7 @@ public class FilmServiceImpl implements FilmService {
         var genresIds = genres.stream()
                 .map(Genre::getId)
                 .toList();
-        if (genresIds.size() !=  genreDao.getGenresByListId(genresIds).size()) {
+        if (genresIds.size() != genreDao.getGenresByListId(genresIds).size()) {
             throw new NotFoundException("Genre(s) not found");
         }
     }

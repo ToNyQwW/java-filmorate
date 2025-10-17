@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Long id) throws NotFoundException {
+    public User getUser(Long id) {
         var user = userDao.getUser(id);
         if (user.isPresent()) {
             var findedUser = user.get();
@@ -48,73 +48,48 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
-        try {
-            normalize(user);
-            var updatedUser = userDao.updateUser(user);
-            log.info("User updated: {}", updatedUser);
-            return updatedUser;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+        normalize(user);
+        var updatedUser = userDao.updateUser(user);
+        log.info("User updated: {}", updatedUser);
+        return updatedUser;
     }
 
     @Override
-    public void addFriend(Long id, Long friendId) throws NotFoundException {
-        try {
-            friendshipDao.addFriend(id, friendId);
-            log.info("Friend added: {}", friendId);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+    public void addFriend(Long id, Long friendId) {
+        friendshipDao.addFriend(id, friendId);
+        log.info("Friend added: {}", friendId);
     }
 
     @Override
-    public void removeFriend(Long id, Long friendId) throws NotFoundException {
-        try {
-            throwIfUserIdNotExists(id);
-            throwIfUserIdNotExists(friendId);
-            friendshipDao.removeFriend(id, friendId);
-            log.info("Friend removed: {}", friendId);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+    public void removeFriend(Long id, Long friendId) {
+        throwIfUserIdNotExists(id);
+        throwIfUserIdNotExists(friendId);
+        friendshipDao.removeFriend(id, friendId);
+        log.info("Friend removed: {}", friendId);
     }
 
     @Override
-    public List<User> getFriends(Long id) throws NotFoundException {
-        try {
-            throwIfUserIdNotExists(id);
-            var friends = friendshipDao.getFriends(id);
-            log.info("Number of friends found: {}", friends.size());
-            return userDao.getUsersByIds(friends);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+    public List<User> getFriends(Long id) {
+        throwIfUserIdNotExists(id);
+        var friends = friendshipDao.getFriends(id);
+        log.info("Number of friends found: {}", friends.size());
+        return userDao.getUsersByIds(friends);
     }
 
     @Override
-    public List<User> getCommonFriends(Long id, Long otherId) throws NotFoundException {
-        try {
-            throwIfUserIdNotExists(id);
-            throwIfUserIdNotExists(otherId);
-            var commonFriends = friendshipDao.getCommonFriends(id, otherId);
-            log.info("Number of common friends found: {}", commonFriends.size());
+    public List<User> getCommonFriends(Long id, Long otherId) {
+        throwIfUserIdNotExists(id);
+        throwIfUserIdNotExists(otherId);
+        var commonFriends = friendshipDao.getCommonFriends(id, otherId);
+        log.info("Number of common friends found: {}", commonFriends.size());
 
-            if(commonFriends.isEmpty()) {
-                return Collections.emptyList();
-            }
-            return userDao.getUsersByIds(commonFriends);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
+        if (commonFriends.isEmpty()) {
+            return Collections.emptyList();
         }
+        return userDao.getUsersByIds(commonFriends);
     }
 
-    private void throwIfUserIdNotExists(Long userId) throws NotFoundException {
+    private void throwIfUserIdNotExists(Long userId) {
         var user = userDao.getUser(userId);
 
         if (user.isEmpty()) {
