@@ -18,17 +18,20 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public List<Genre> getAllGenres() {
-        return genreDao.getAllGenres();
+        var result = genreDao.getAllGenres();
+        log.info("Number of Genres found: {}", result.size());
+        return result;
     }
 
     @Override
     public Genre getGenreById(Long id) {
-        var result = genreDao.getGenreById(id);
+        var genre = genreDao.getGenreById(id);
 
-        if (result.isEmpty()) {
+        if (genre.isEmpty()) {
+            log.error("Genre with id {} not found", id);
             throw new NotFoundException("Genre with id " + id + " not found");
         }
-
-        return result.get();
+        log.info("Genre found: {}", genre);
+        return genre.get();
     }
 }

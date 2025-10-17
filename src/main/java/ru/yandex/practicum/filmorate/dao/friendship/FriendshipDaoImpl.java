@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.dao.friendship;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +53,11 @@ public class FriendshipDaoImpl implements FriendshipDao {
 
     @Override
     public void addFriend(Long userId, Long friendId) {
-        jdbcTemplate.update(ADD_FRIENDSHIP_SQL, userId, friendId);
+        try {
+            jdbcTemplate.update(ADD_FRIENDSHIP_SQL, userId, friendId);
+        } catch (DataAccessException e) {
+            throw new NotFoundException("Cannot create friendship: user(s) not found");
+        }
     }
 
     @Override

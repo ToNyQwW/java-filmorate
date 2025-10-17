@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.dao.user.UserDao;
 import ru.yandex.practicum.filmorate.entity.User;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -16,7 +17,6 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
-
     private final FriendshipDao friendshipDao;
 
     @Override
@@ -47,9 +47,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) throws NotFoundException {
+    public User updateUser(User user) {
         try {
-            throwIfUserIdNotExists(user.getId());
             normalize(user);
             var updatedUser = userDao.updateUser(user);
             log.info("User updated: {}", updatedUser);
@@ -63,8 +62,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addFriend(Long id, Long friendId) throws NotFoundException {
         try {
-            throwIfUserIdNotExists(id);
-            throwIfUserIdNotExists(friendId);
             friendshipDao.addFriend(id, friendId);
             log.info("Friend added: {}", friendId);
         } catch (Exception e) {
@@ -106,6 +103,10 @@ public class UserServiceImpl implements UserService {
             throwIfUserIdNotExists(otherId);
             var commonFriends = friendshipDao.getCommonFriends(id, otherId);
             log.info("Number of common friends found: {}", commonFriends.size());
+
+            if(commonFriends.isEmpty()) {
+                return Collections.emptyList();
+            }
             return userDao.getUsersByIds(commonFriends);
         } catch (Exception e) {
             log.error(e.getMessage());

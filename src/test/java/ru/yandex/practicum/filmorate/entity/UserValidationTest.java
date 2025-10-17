@@ -31,12 +31,12 @@ class UserValidationTest {
     }
 
     private User createUser() {
-        User user = new User();
-        user.setName("user");
-        user.setEmail("email@email");
-        user.setLogin("login");
-        user.setBirthday(LocalDate.now());
-        return user;
+        return User.builder()
+                .name("user")
+                .email("email@email")
+                .login("login")
+                .birthday(LocalDate.now())
+                .build();
     }
 
     @Test

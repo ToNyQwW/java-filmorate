@@ -18,17 +18,20 @@ public class MpaServiceImpl implements MpaService {
 
     @Override
     public List<Mpa> getAllMpa() {
-        return mpaDao.getAllMpa();
+        var result = mpaDao.getAllMpa();
+        log.info("Number of Mpa found: {}", result.size());
+        return result;
     }
 
     @Override
     public Mpa getMpaById(Long id) {
-        //TODO допилить логику сервиса
         var mpa = mpaDao.getMpaById(id);
 
         if (mpa.isEmpty()) {
+            log.error("Mpa with id {} not found", id);
             throw new NotFoundException("Mpa with id " + id + " not found");
         }
+        log.info("Mpa found: {}", mpa);
         return mpa.get();
     }
 }

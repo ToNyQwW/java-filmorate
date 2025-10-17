@@ -30,12 +30,12 @@ class FilmValidationTest {
     }
 
     private Film createFilm() {
-        Film film = new Film();
-        film.setName("film");
-        film.setDescription("description");
-        film.setReleaseDate(LocalDate.now());
-        film.setDuration(200);
-        return film;
+        return Film.builder()
+                .name("film")
+                .description("description")
+                .releaseDate(LocalDate.now())
+                .duration(200)
+                .build();
     }
 
     @Test

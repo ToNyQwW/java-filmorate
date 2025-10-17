@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.dao.likes;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +54,11 @@ public class LikesDaoImpl implements LikesDao {
 
     @Override
     public void addLike(Long filmId, Long userId) {
-        jdbcTemplate.update(ADD_LIKE_SQL, filmId, userId);
+        try {
+            jdbcTemplate.update(ADD_LIKE_SQL, filmId, userId);
+        } catch (DataAccessException e) {
+            throw new NotFoundException("Cannot add like: user(s) not found");
+        }
     }
 
     @Override
@@ -89,6 +95,10 @@ public class LikesDaoImpl implements LikesDao {
 
     @Override
     public void removeLike(Long filmId, Long userId) {
-        jdbcTemplate.update(REMOVE_LIKE_SQL, filmId, userId);
+        var update = jdbcTemplate.update(REMOVE_LIKE_SQL, filmId, userId);
+
+        if (update == 0) {
+            throw new NotFoundException("Cannot remove like: user or film not found");
+        }
     }
 }

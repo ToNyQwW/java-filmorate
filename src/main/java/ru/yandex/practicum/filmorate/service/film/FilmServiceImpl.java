@@ -8,11 +8,12 @@ import ru.yandex.practicum.filmorate.dao.filmGenre.FilmGenreDao;
 import ru.yandex.practicum.filmorate.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.dao.likes.LikesDao;
 import ru.yandex.practicum.filmorate.dao.mpa.MpaDao;
-import ru.yandex.practicum.filmorate.dao.user.UserDao;
 import ru.yandex.practicum.filmorate.entity.Film;
+import ru.yandex.practicum.filmorate.entity.Genre;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -21,34 +22,29 @@ public class FilmServiceImpl implements FilmService {
 
     private final MpaDao mpaDao;
     private final FilmDao filmDao;
-    private final UserDao userDao;
     private final LikesDao likesDao;
     private final GenreDao genreDao;
     private final FilmGenreDao filmGenreDao;
 
     public Film addFilm(Film film) {
         throwIfMpaIdNotExists(film.getMpa().getId());
-        if (film.getGenres() != null) {
-            for (var genre : film.getGenres()) {
-                throwIfGenreIdNotExists(genre.getId());
-            }
+        var genres = film.getGenres();
+        if (genres != null) {
+            throwIfGenresNotExists(genres);
         }
 
         var addedFilm = filmDao.addFilm(film);
-
-        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-            filmGenreDao.addFilmGenres(addedFilm.getId(), film.getGenres());
+        if (genres != null && !genres.isEmpty()) {
+            filmGenreDao.addFilmGenres(addedFilm.getId(), genres);
         }
 
-        var fullFilm = filmDao.getFilm(addedFilm.getId())
-                .orElseThrow(() -> new NotFoundException("Film with id " + addedFilm.getId() + " not found"));
-
-        log.info("Film added: {}", fullFilm);
-        return fullFilm;
+        var result = filmDao.getFilm(addedFilm.getId()).get();
+        log.info("Film added: {}", result);
+        return result;
     }
 
     @Override
-    public Film getFilm(Long id) throws NotFoundException {
+    public Film getFilm(Long id) {
         var film = filmDao.getFilm(id);
         if (film.isPresent()) {
             var findedFilm = film.get();
@@ -67,9 +63,8 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film updateFilm(Film film) throws NotFoundException {
+    public Film updateFilm(Film film) {
         try {
-            throwIfFilmIdNotExists(film.getId());
             var updatedFilm = filmDao.updateFilm(film);
             log.info("Film updated: {}", updatedFilm);
             return updatedFilm;
@@ -82,8 +77,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public void addLike(Long filmId, Long userId) {
         try {
-            throwIfFilmIdNotExists(filmId);
-            throwIfUserIdNotExists(userId);
             likesDao.addLike(filmId, userId);
             log.info("Added like for filmId: {}, userId: {}", filmId, userId);
         } catch (Exception e) {
@@ -95,8 +88,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public void removeLike(Long filmId, Long userId) {
         try {
-            throwIfFilmIdNotExists(filmId);
-            throwIfUserIdNotExists(userId);
             likesDao.removeLike(filmId, userId);
             log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
         } catch (Exception e) {
@@ -112,23 +103,7 @@ public class FilmServiceImpl implements FilmService {
         return popularFilms;
     }
 
-    private void throwIfFilmIdNotExists(Long filmId) throws NotFoundException {
-        var film = filmDao.getFilm(filmId);
-
-        if (film.isEmpty()) {
-            throw new NotFoundException("Film with id " + filmId + " not found");
-        }
-    }
-
-    private void throwIfUserIdNotExists(Long userId) throws NotFoundException {
-        var user = userDao.getUser(userId);
-
-        if (user.isEmpty()) {
-            throw new NotFoundException("User with id " + userId + " not found");
-        }
-    }
-
-    private void throwIfMpaIdNotExists(Long mpaId) throws NotFoundException {
+    private void throwIfMpaIdNotExists(Long mpaId) {
         var mpa = mpaDao.getMpaById(mpaId);
 
         if (mpa.isEmpty()) {
@@ -136,11 +111,12 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    private void throwIfGenreIdNotExists(Long genreId) throws NotFoundException {
-        var genre = genreDao.getGenreById(genreId);
-
-        if (genre.isEmpty()) {
-            throw new NotFoundException("Genre with id " + genreId + " not found");
+    private void throwIfGenresNotExists(Set<Genre> genres) {
+        var genresIds = genres.stream()
+                .map(Genre::getId)
+                .toList();
+        if (genresIds.size() !=  genreDao.getGenresByListId(genresIds).size()) {
+            throw new NotFoundException("Genre(s) not found");
         }
     }
 }
