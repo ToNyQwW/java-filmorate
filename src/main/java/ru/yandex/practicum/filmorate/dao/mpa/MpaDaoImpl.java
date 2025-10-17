@@ -27,7 +27,6 @@ public class MpaDaoImpl implements MpaDao {
             """;
 
     private final JdbcTemplate jdbcTemplate;
-
     private final MpaRowMapper mpaRowMapper;
 
     @Override

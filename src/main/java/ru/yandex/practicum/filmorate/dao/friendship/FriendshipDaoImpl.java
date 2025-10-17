@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.dao.friendship;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@AllArgsConstructor
 public class FriendshipDaoImpl implements FriendshipDao {
 
     private static final String ADD_FRIENDSHIP_SQL = """
@@ -48,7 +47,6 @@ public class FriendshipDaoImpl implements FriendshipDao {
             """;
 
     private final JdbcTemplate jdbcTemplate;
-
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override

@@ -1,16 +1,18 @@
 package ru.yandex.practicum.filmorate.dao.likes;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@AllArgsConstructor
 public class LikesDaoImpl implements LikesDao {
 
     private static final String ADD_LIKE_SQL = """
@@ -26,11 +28,10 @@ public class LikesDaoImpl implements LikesDao {
                     WHERE film_id = ?
             """;
     private static final String GET_POPULAR_FILMS_ID_SQL = """
-                    SELECT film_id AS filmId,
-                        COUNT(user_id) AS likeCount
+                    SELECT film_id
                     FROM likes
                     GROUP BY film_id
-                    ORDER BY likeCount DESC
+                    ORDER BY COUNT(user_id) DESC
                     LIMIT ?
             """;
 
@@ -47,7 +48,6 @@ public class LikesDaoImpl implements LikesDao {
             """;
 
     private final JdbcTemplate jdbcTemplate;
-
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
@@ -57,33 +57,25 @@ public class LikesDaoImpl implements LikesDao {
 
     @Override
     public List<Long> getFilmLikes(Long filmId) {
-        return jdbcTemplate.query(GET_LIKES_BY_FILM_ID_SQL,
-                (rs, rowNum) -> rs.getLong("user_id"),
-                filmId);
+        return jdbcTemplate.queryForList(GET_LIKES_BY_FILM_ID_SQL, Long.class, filmId);
     }
 
     @Override
     public Map<Long, List<Long>> getUserLikesByFilmIds(List<Long> filmsIds) {
-        if (filmsIds == null || filmsIds.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("filmsIds", filmsIds);
 
         return namedParameterJdbcTemplate.query(GET_USER_IDS_BY_FILM_IDS_SQL, params, rs -> {
             Map<Long, List<Long>> result = new HashMap<>();
+            for (Long filmsId : filmsIds) {
+                result.put(filmsId, new ArrayList<>());
+            }
 
             while (rs.next()) {
                 var filmId = rs.getLong("film_id");
                 var userId = rs.getLong("user_id");
 
-                result.computeIfAbsent(filmId, value -> new ArrayList<>()).add(userId);
-            }
-
-            //TODO ??? надо ли
-            for (Long id : filmsIds) {
-                result.putIfAbsent(id, new ArrayList<>());
+                result.get(filmId).add(userId);
             }
 
             return result;
@@ -92,15 +84,7 @@ public class LikesDaoImpl implements LikesDao {
 
     @Override
     public List<Long> getPopularFilmIds(Long count) {
-        return jdbcTemplate.query(GET_POPULAR_FILMS_ID_SQL, rs -> {
-            List<Long> result = new ArrayList<>();
-
-            while (rs.next()) {
-                var filmId = rs.getLong("filmId");
-                result.add(filmId);
-            }
-            return result;
-        }, count);
+        return jdbcTemplate.queryForList(GET_POPULAR_FILMS_ID_SQL, Long.class, count);
     }
 
     @Override

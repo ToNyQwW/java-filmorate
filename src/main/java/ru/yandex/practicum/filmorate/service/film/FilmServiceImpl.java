@@ -19,16 +19,11 @@ import java.util.List;
 @AllArgsConstructor
 public class FilmServiceImpl implements FilmService {
 
-    private final FilmDao filmDao;
-
-    private final UserDao userDao;
-
-    private final LikesDao likesDao;
-
     private final MpaDao mpaDao;
-
+    private final FilmDao filmDao;
+    private final UserDao userDao;
+    private final LikesDao likesDao;
     private final GenreDao genreDao;
-
     private final FilmGenreDao filmGenreDao;
 
     public Film addFilm(Film film) {

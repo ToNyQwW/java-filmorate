@@ -12,9 +12,6 @@ import ru.yandex.practicum.filmorate.dao.friendship.FriendshipDao;
 import ru.yandex.practicum.filmorate.entity.User;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +22,11 @@ public class UserDaoImpl implements UserDao {
     private static final String CREATE_USER_SQL = """
             INSERT INTO users
                 (email, login, name, birthday)
-            VALUES (?, ?, ?, ?)
+            VALUES (:email, :login, :name, :birthday)
             """;
 
     private static final String GET_USER_SQL = """
-            SELECT user_id AS id,
+            SELECT user_id,
                    email,
                    login,
                    name,
@@ -39,7 +36,7 @@ public class UserDaoImpl implements UserDao {
             """;
 
     private static final String GET_USERS_BY_LIST_IDS_SQL = """
-            SELECT user_id AS id,
+            SELECT user_id,
                    email,
                    login,
                    name,
@@ -49,7 +46,7 @@ public class UserDaoImpl implements UserDao {
             """;
 
     private static final String GET_ALL_USERS_SQL = """
-            SELECT user_id AS id,
+            SELECT user_id,
                    email,
                    login,
                    name,
@@ -66,31 +63,23 @@ public class UserDaoImpl implements UserDao {
             WHERE user_id = ?
             """;
 
-    private final UserRowMapper userRowMapper;
-
     private final JdbcTemplate jdbcTemplate;
-
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+    private final UserRowMapper userRowMapper;
     private final FriendshipDao friendshipDao;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public User createUser(User user) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("email", user.getEmail())
+                .addValue("login", user.getLogin())
+                .addValue("name", user.getName())
+                .addValue("birthday", user.getBirthday());
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
+        namedParameterJdbcTemplate.update(CREATE_USER_SQL, params, keyHolder);
 
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(CREATE_USER_SQL, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, user.getEmail());
-            ps.setString(2, user.getLogin());
-            ps.setString(3, user.getName());
-            ps.setDate(4, Date.valueOf(user.getBirthday()));
-            return ps;
-        }, keyHolder);
-
-        if (keyHolder.getKey() != null) {
-            user.setId(keyHolder.getKey().longValue());
-        }
-
+        user.setId(keyHolder.getKey().longValue());
         return user;
     }
 

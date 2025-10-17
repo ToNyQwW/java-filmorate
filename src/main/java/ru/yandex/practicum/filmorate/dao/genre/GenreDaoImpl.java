@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.entity.Genre;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 @AllArgsConstructor
@@ -34,13 +33,10 @@ public class GenreDaoImpl implements GenreDao {
                            name
                     FROM genre
                     WHERE genre_id IN (:ids)
-                    ORDER BY genre_id
             """;
 
-    private final GenreRowMapper genreRowMapper;
-
     private final JdbcTemplate jdbcTemplate;
-
+    private final GenreRowMapper genreRowMapper;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
