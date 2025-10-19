@@ -143,8 +143,8 @@ public class FilmDaoImpl implements FilmDao {
 
         for (Film film : films) {
             var id = film.getId();
-            film.setLikes(new HashSet<>(userLikes.get(id)));
-            film.setGenres(new HashSet<>(filmsGenres.get(id)));
+            film.setLikes(new HashSet<>(userLikes.getOrDefault(id, Collections.emptyList())));
+            film.setGenres(new HashSet<>(filmsGenres.getOrDefault(id, Collections.emptyList())));
         }
         return films;
     }

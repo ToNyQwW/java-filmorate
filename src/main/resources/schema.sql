@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS friendship
 (
-    user_id      INTEGER NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
-    friend_id    INTEGER NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    user_id      BIGINT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    friend_id    BIGINT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     is_confirmed BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (user_id, friend_id),
     CHECK (user_id != friend_id)
@@ -55,14 +55,14 @@ CREATE TABLE IF NOT EXISTS film
 
 CREATE TABLE IF NOT EXISTS film_genre
 (
-    film_id  INTEGER NOT NULL REFERENCES film (film_id) ON DELETE CASCADE,
-    genre_id INTEGER NOT NULL REFERENCES genre (genre_id) ON DELETE RESTRICT,
+    film_id  BIGINT NOT NULL REFERENCES film (film_id) ON DELETE CASCADE,
+    genre_id BIGINT NOT NULL REFERENCES genre (genre_id) ON DELETE RESTRICT,
     PRIMARY KEY (film_id, genre_id)
 );
 
 CREATE TABLE IF NOT EXISTS likes
 (
-    film_id INTEGER NOT NULL REFERENCES film (film_id) ON DELETE CASCADE,
-    user_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    film_id BIGINT NOT NULL REFERENCES film (film_id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     PRIMARY KEY (film_id, user_id)
 );
