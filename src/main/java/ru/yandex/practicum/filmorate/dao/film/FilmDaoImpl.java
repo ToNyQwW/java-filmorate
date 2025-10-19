@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.film;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -14,6 +15,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.*;
 
+@Slf4j
 @Repository
 @AllArgsConstructor
 public class FilmDaoImpl implements FilmDao {
@@ -159,6 +161,7 @@ public class FilmDaoImpl implements FilmDao {
                 film.getId());
 
         if (update == 0) {
+            log.error("Failed to update film");
             throw new NotFoundException("Film with id " + film.getId() + " not found");
         }
         return film;

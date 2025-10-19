@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.likes;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Repository
 @AllArgsConstructor
 public class LikesDaoImpl implements LikesDao {
@@ -57,6 +59,7 @@ public class LikesDaoImpl implements LikesDao {
         try {
             jdbcTemplate.update(ADD_LIKE_SQL, filmId, userId);
         } catch (DataAccessException e) {
+            log.error("Error adding like to DB", e);
             throw new NotFoundException("Cannot add like: user(s) not found");
         }
     }

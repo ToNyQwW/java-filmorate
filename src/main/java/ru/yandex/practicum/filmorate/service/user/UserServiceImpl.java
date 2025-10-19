@@ -93,6 +93,7 @@ public class UserServiceImpl implements UserService {
         var user = userDao.getUser(userId);
 
         if (user.isEmpty()) {
+            log.error("User with id {} not found", userId);
             throw new NotFoundException("User with id " + userId + " not found");
         }
     }

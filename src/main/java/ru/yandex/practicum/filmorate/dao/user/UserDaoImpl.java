@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.user;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,6 +16,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 @AllArgsConstructor
 public class UserDaoImpl implements UserDao {
@@ -137,6 +139,7 @@ public class UserDaoImpl implements UserDao {
                 id);
 
         if (update == 0) {
+            log.error("Error updating user");
             throw new NotFoundException("User with id " + id + " not found");
         }
         return user;

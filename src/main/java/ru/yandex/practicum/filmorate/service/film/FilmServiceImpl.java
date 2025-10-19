@@ -92,6 +92,7 @@ public class FilmServiceImpl implements FilmService {
         var mpa = mpaDao.getMpaById(mpaId);
 
         if (mpa.isEmpty()) {
+            log.error("MPA id not found: {}", mpaId);
             throw new NotFoundException("Mpa with id " + mpaId + " not found");
         }
     }
@@ -101,6 +102,7 @@ public class FilmServiceImpl implements FilmService {
                 .map(Genre::getId)
                 .toList();
         if (genresIds.size() != genreDao.getGenresByListId(genresIds).size()) {
+            log.error("Genres with id {} not found", genresIds);
             throw new NotFoundException("Genre(s) not found");
         }
     }
