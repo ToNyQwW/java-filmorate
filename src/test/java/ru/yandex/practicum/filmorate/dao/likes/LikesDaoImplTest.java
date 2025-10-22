@@ -48,7 +48,7 @@ class LikesDaoImplTest {
     }
 
     @Test
-    @DisplayName("Добавление и получение лайка")
+    @DisplayName("Добавление лайка фильму — при успешном добавлении лайк корректно сохраняется и возвращается из БД")
     void addAndGetLike() {
         likesDao.addLike(filmId, userId);
 
@@ -59,7 +59,7 @@ class LikesDaoImplTest {
     }
 
     @Test
-    @DisplayName("Удаление лайка")
+    @DisplayName("Удаление лайка — после удаления лайк больше не присутствует в БД")
     void removeLike() {
         likesDao.addLike(filmId, userId);
 
@@ -77,7 +77,7 @@ class LikesDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение популярных фильмов")
+    @DisplayName("Получение популярных фильмов — при наличии лайков возвращается список популярных ID фильмов")
     void getPopularFilmIds() {
         likesDao.addLike(filmId, userId);
 
@@ -87,7 +87,7 @@ class LikesDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение лайков для списка фильмов")
+    @DisplayName("Получение лайков по списку ID фильмов — при передаче списка ID возвращаются корректный Map<Long, List<Long>>")
     void getUserLikesByFilmIds() {
         likesDao.addLike(filmId, userId);
 

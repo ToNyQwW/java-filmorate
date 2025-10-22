@@ -10,6 +10,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.friendship.FriendshipDao;
+import ru.yandex.practicum.filmorate.dao.user.sql.*;
 import ru.yandex.practicum.filmorate.entity.User;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
@@ -20,50 +21,6 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class UserDaoImpl implements UserDao {
-
-    private static final String CREATE_USER_SQL = """
-            INSERT INTO users
-                (email, login, name, birthday)
-            VALUES (:email, :login, :name, :birthday)
-            """;
-
-    private static final String GET_USER_SQL = """
-            SELECT user_id,
-                   email,
-                   login,
-                   name,
-                   birthday
-            FROM users
-            WHERE user_id = ?
-            """;
-
-    private static final String GET_USERS_BY_LIST_IDS_SQL = """
-            SELECT user_id,
-                   email,
-                   login,
-                   name,
-                   birthday
-            FROM users
-            WHERE user_id IN (:userIds)
-            """;
-
-    private static final String GET_ALL_USERS_SQL = """
-            SELECT user_id,
-                   email,
-                   login,
-                   name,
-                   birthday
-            FROM users
-            """;
-
-    private static final String UPDATE_USER_SQL = """
-            UPDATE users
-            SET email = ?,
-                login = ?,
-                name = ?,
-                birthday = ?
-            WHERE user_id = ?
-            """;
 
     private final JdbcTemplate jdbcTemplate;
     private final UserRowMapper userRowMapper;
@@ -79,7 +36,7 @@ public class UserDaoImpl implements UserDao {
                 .addValue("birthday", user.getBirthday());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(CREATE_USER_SQL, params, keyHolder);
+        namedParameterJdbcTemplate.update(CreateUserSql.create(), params, keyHolder);
 
         user.setId(keyHolder.getKey().longValue());
         return user;
@@ -87,7 +44,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> getUser(Long id) {
-        var users = jdbcTemplate.query(GET_USER_SQL, userRowMapper, id);
+        var users = jdbcTemplate.query(GetUserSql.create(), userRowMapper, id);
         User user = DataAccessUtils.singleResult(users);
 
         if (user != null) {
@@ -102,14 +59,14 @@ public class UserDaoImpl implements UserDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userIds", ids);
 
-        var users = namedParameterJdbcTemplate.query(GET_USERS_BY_LIST_IDS_SQL, params, userRowMapper);
+        var users = namedParameterJdbcTemplate.query(GetUsersByListIdsSql.create(), params, userRowMapper);
 
         return buildUsers(users);
     }
 
     @Override
     public List<User> getAllUsers() {
-        var users = jdbcTemplate.query(GET_ALL_USERS_SQL, userRowMapper);
+        var users = jdbcTemplate.query(GetAllUsersSql.create(), userRowMapper);
 
         return buildUsers(users);
     }
@@ -131,14 +88,14 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User updateUser(User user) {
         var id = user.getId();
-        var update = jdbcTemplate.update(UPDATE_USER_SQL,
+        var updatedCount = jdbcTemplate.update(UpdateUserSql.create(),
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
                 user.getBirthday(),
                 id);
 
-        if (update == 0) {
+        if (updatedCount == 0) {
             log.error("Error updating user");
             throw new NotFoundException("User with id " + id + " not found");
         }

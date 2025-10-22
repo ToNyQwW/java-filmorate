@@ -22,7 +22,7 @@ class MpaDaoImplTest {
     private MpaDaoImpl mpaDao;
 
     @Test
-    @DisplayName("Получение всех MPA рейтингов из БД")
+    @DisplayName("Получение всех рейтингов MPA — возвращается полный список с корректными значениями")
     void getAllMpa() {
         List<Mpa> mpas = mpaDao.getAllMpa();
 
@@ -37,7 +37,7 @@ class MpaDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение MPA по существующему ID")
+    @DisplayName("Получение рейтинга MPA по ID — возвращается корректный Mpa")
     void getMpaById() {
         Optional<Mpa> mpaOpt = mpaDao.getMpaById(3L);
 

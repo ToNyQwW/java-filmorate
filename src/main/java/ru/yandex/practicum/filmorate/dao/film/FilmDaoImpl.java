@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dao.film.sql.*;
 import ru.yandex.practicum.filmorate.dao.filmGenre.FilmGenreDao;
 import ru.yandex.practicum.filmorate.dao.likes.LikesDao;
 import ru.yandex.practicum.filmorate.entity.Film;
@@ -19,60 +20,6 @@ import java.util.*;
 @Repository
 @AllArgsConstructor
 public class FilmDaoImpl implements FilmDao {
-
-    private static final String ADD_FILM_SQL = """
-            INSERT INTO film
-            (name, description, release_date, duration, mpa_id)
-            VALUES (:name, :description, :releaseDate, :duration, :mpaId)
-            """;
-
-    private static final String GET_FILM_WITH_MPA_SQL = """
-             SELECT f.film_id,
-                    f.name,
-                    f.description,
-                    f.release_date,
-                    f.duration,
-                    m.mpa_id,
-                    m.name AS mpa_name
-            FROM film f
-            JOIN mpa m ON f.mpa_id = m.mpa_id
-            WHERE f.film_id = ?
-            """;
-
-    private static final String GET_ALL_FILMS_WITH_MPA_SQL = """
-            SELECT f.film_id,
-                   f.name,
-                   f.description,
-                   f.release_date,
-                   f.duration,
-                   m.mpa_id,
-                   m.name AS mpa_name
-            FROM film f
-            JOIN mpa m ON f.mpa_id = m.mpa_id
-            """;
-
-    private static final String GET_FILMS_BY_LIST_IDS_SQL = """
-            SELECT f.film_id,
-                   f.name,
-                   f.description,
-                   f.release_date,
-                   f.duration,
-                   m.mpa_id,
-                   m.name AS mpa_name
-            FROM film f
-            JOIN mpa m ON f.mpa_id = m.mpa_id
-            WHERE f.film_id IN (:filmsIds)
-            """;
-
-    private static final String UPDATE_FILM_SQL = """
-            UPDATE film
-                SET name = ?,
-                    description = ?,
-                    release_date = ?,
-                    duration = ?,
-                    mpa_id = ?
-            WHERE film_id = ?;
-            """;
 
     private final LikesDao likesDao;
     private final FilmGenreDao filmGenreDao;
@@ -90,7 +37,7 @@ public class FilmDaoImpl implements FilmDao {
                 .addValue("mpaId", film.getMpa().getId());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(ADD_FILM_SQL, params, keyHolder);
+        namedParameterJdbcTemplate.update(AddFilmSql.create(), params, keyHolder);
 
         film.setId(keyHolder.getKey().longValue());
 
@@ -99,7 +46,7 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public Optional<Film> getFilm(Long filmId) {
-        var film = jdbcTemplate.queryForObject(GET_FILM_WITH_MPA_SQL, filmRowMapper, filmId);
+        var film = jdbcTemplate.queryForObject(GetFilmWithMpaSql.create(), filmRowMapper, filmId);
 
         if (film != null) {
             var filmLikes = likesDao.getFilmLikes(filmId);
@@ -113,7 +60,7 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> getFilms() {
-        List<Film> films = jdbcTemplate.query(GET_ALL_FILMS_WITH_MPA_SQL, filmRowMapper);
+        List<Film> films = jdbcTemplate.query(GetAllFilmsWithMpaSql.create(), filmRowMapper);
 
         return buildFilms(films);
     }
@@ -129,12 +76,16 @@ public class FilmDaoImpl implements FilmDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("filmsIds", popularFilmIds);
 
-        var films = namedParameterJdbcTemplate.query(GET_FILMS_BY_LIST_IDS_SQL, params, filmRowMapper);
+        var films = namedParameterJdbcTemplate.query(GetFilmsByListIdsSql.create(), params, filmRowMapper);
         var result = buildFilms(films);
 
-        result.sort(Comparator.comparingInt(film -> popularFilmIds.indexOf(film.getId())));
+        sortFilmsByPopularityOrder(result, popularFilmIds);
 
         return result;
+    }
+
+    private void sortFilmsByPopularityOrder(List<Film> films, List<Long> popularFilmIds) {
+        films.sort(Comparator.comparingInt(film -> popularFilmIds.indexOf(film.getId())));
     }
 
     private List<Film> buildFilms(List<Film> films) {
@@ -153,14 +104,14 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public Film updateFilm(Film film) {
-        int update = jdbcTemplate.update(UPDATE_FILM_SQL, film.getName(),
+        int updatedCount = jdbcTemplate.update(UpdateFilmSql.create(), film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId());
 
-        if (update == 0) {
+        if (updatedCount == 0) {
             log.error("Failed to update film");
             throw new NotFoundException("Film with id " + film.getId() + " not found");
         }

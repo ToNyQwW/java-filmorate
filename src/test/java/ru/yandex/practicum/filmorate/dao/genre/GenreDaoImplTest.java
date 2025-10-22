@@ -22,7 +22,7 @@ class GenreDaoImplTest {
     private GenreDao genreDao;
 
     @Test
-    @DisplayName("Получение всех жанров")
+    @DisplayName("Получение всех жанров — при обращении к БД возвращается полный список доступных жанров")
     void getAllGenres() {
         List<Genre> genres = genreDao.getAllGenres();
 
@@ -31,7 +31,7 @@ class GenreDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение жанра по ID")
+    @DisplayName("Получение жанра по ID — при существующем ID возвращается корректный жанр")
     void getGenreById() {
         Long comedyId = genreDao.getAllGenres().stream()
                 .filter(g -> "Комедия".equals(g.getName()))
@@ -45,14 +45,14 @@ class GenreDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение жанра по несуществующему ID")
+    @DisplayName("Получение жанра по несуществующему ID — возвращается пустой результат")
     void getGenreByNonExistentId() {
         Optional<Genre> genreOptional = genreDao.getGenreById(999L);
         assertTrue(genreOptional.isEmpty());
     }
 
     @Test
-    @DisplayName("Получение жанров по списку ID")
+    @DisplayName("Получение жанров по списку ID — при передаче нескольких ID возвращаются соответствующие жанры")
     void getGenresByListId() {
         List<Long> ids = genreDao.getAllGenres().stream()
                 .filter(g -> g.getName().equals("Комедия") || g.getName().equals("Драма"))

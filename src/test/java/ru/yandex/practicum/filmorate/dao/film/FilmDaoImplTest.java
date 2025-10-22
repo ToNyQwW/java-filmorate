@@ -24,7 +24,7 @@ class FilmDaoImplTest {
     private FilmDaoImpl filmDao;
 
     @Test
-    @DisplayName("Добавление и получение фильма")
+    @DisplayName("Добавление фильма — при корректных данных фильм сохраняется и читается из БД корректно")
     void addAndGetFilm() {
         Film film = Film.builder()
                 .name("film")
@@ -50,7 +50,7 @@ class FilmDaoImplTest {
     }
 
     @Test
-    @DisplayName("Обновление фильма")
+    @DisplayName("Обновление существующего фильма — поля корректно изменяются в БД")
     void updateFilm() {
         Film film = Film.builder()
                 .name("film")
@@ -81,7 +81,7 @@ class FilmDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение всех фильмов")
+    @DisplayName("Получение списка фильмов — при наличии записей возвращается полный список List<Film>")
     void getAllFilms() {
         Film film1 = Film.builder()
                 .name("film1")

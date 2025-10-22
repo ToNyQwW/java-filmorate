@@ -45,7 +45,7 @@ class FilmGenreDaoImplTest {
     }
 
     @Test
-    @DisplayName("Добавление и получение жанров фильма")
+    @DisplayName("Добавление жанров фильму — при успешном добавлении жанры корректно возвращаются из БД")
     void addAndGetFilmGenres() {
         Genre comedy = findGenreByName("Комедия");
         Genre drama = findGenreByName("Драма");
@@ -66,7 +66,7 @@ class FilmGenreDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение жанров для списка фильмов")
+    @DisplayName("Получение жанров по ID фильмов — при передаче ID возвращаются соответствующие жанры Map<Long, List<Genre>>")
     void getFilmsGenresByListFilmIds() {
         Genre comedy = findGenreByName("Комедия");
         Genre drama = findGenreByName("Драма");

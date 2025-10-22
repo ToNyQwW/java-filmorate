@@ -45,7 +45,7 @@ class UserDaoImplTest {
     }
 
     @Test
-    @DisplayName("Создание нового пользователя")
+    @DisplayName("Создание нового пользователя — успешно сохраняется и доступен для получения по ID")
     void createUser() {
         User newUser = User.builder()
                 .email("test@mail.com")
@@ -65,7 +65,7 @@ class UserDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение пользователя по ID")
+    @DisplayName("Получение пользователя по существующему ID — возвращается корректный объект")
     void getUser() {
         Optional<User> userOpt = userDao.getUser(1L);
 
@@ -76,7 +76,7 @@ class UserDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение всех пользователей")
+    @DisplayName("Получение всех пользователей — должен возвращаться полный список пользователей")
     void getAllUsers() {
         List<User> users = userDao.getAllUsers();
 
@@ -89,7 +89,7 @@ class UserDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение пользователей по списку ID")
+    @DisplayName("Получение пользователей по списку ID — возвращаются только выбранные пользователи")
     void getUsersByIds() {
         List<Long> ids = List.of(1L, 2L);
 
@@ -103,7 +103,7 @@ class UserDaoImplTest {
     }
 
     @Test
-    @DisplayName("Обновление существующего пользователя")
+    @DisplayName("Обновление существующего пользователя — данные корректно изменяются в БД")
     void updateUser() {
         User existing = userDao.getUser(1L).orElseThrow();
 

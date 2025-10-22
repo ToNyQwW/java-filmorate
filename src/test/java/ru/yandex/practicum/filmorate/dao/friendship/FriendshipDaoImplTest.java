@@ -47,7 +47,7 @@ class FriendshipDaoImplTest {
     }
 
     @Test
-    @DisplayName("Добавление и получение друзей пользователя")
+    @DisplayName("Добавление друзей пользователю — при успешном добавлении список друзей корректно возвращается")
     void addAndGetFriends() {
         friendshipDao.addFriend(1L, 2L);
         friendshipDao.addFriend(1L, 3L);
@@ -61,7 +61,7 @@ class FriendshipDaoImplTest {
     }
 
     @Test
-    @DisplayName("Удаление друга")
+    @DisplayName("Удаление друга — после удаления пользователь больше не отображается в списке друзей")
     void removeFriend() {
         friendshipDao.addFriend(1L, 2L);
         friendshipDao.addFriend(1L, 3L);
@@ -75,7 +75,7 @@ class FriendshipDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение общих друзей")
+    @DisplayName("Получение общих друзей — при наличии общих пользователей возвращается корректный список")
     void getCommonFriends() {
         friendshipDao.addFriend(1L, 3L);
         friendshipDao.addFriend(2L, 3L);
@@ -89,7 +89,7 @@ class FriendshipDaoImplTest {
     }
 
     @Test
-    @DisplayName("Получение друзей по списку пользователей")
+    @DisplayName("Получение друзей списка пользователей — при передаче нескольких ID возвращаются их списки друзей Map<Long, List<Long>>")
     void getFriendsByUserIds() {
         friendshipDao.addFriend(1L, 2L);
         friendshipDao.addFriend(1L, 3L);
