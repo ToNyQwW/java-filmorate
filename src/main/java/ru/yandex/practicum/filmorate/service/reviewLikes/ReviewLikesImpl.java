@@ -16,29 +16,54 @@ public class ReviewLikesImpl implements ReviewLikesService {
 
     @Override
     public void addLikeReview(Long reviewId, Long userId) {
-        reviewLikesDao.addLikeReview(reviewId, userId);
-        reviewDao.increaseUsefulReview(reviewId);
+        if (reviewLikesDao.hasReactionToReview(reviewId, userId, true)) {
+            log.info("User {} already liked review {}", userId, reviewId);
+        }
+
+        if (reviewLikesDao.hasReactionToReview(reviewId, userId, false)) {
+            reviewLikesDao.removeDislikeReview(reviewId, userId);
+            reviewDao.increaseUsefulReview(reviewId, 2);
+        } else {
+            reviewLikesDao.addLikeReview(reviewId, userId);
+            reviewDao.increaseUsefulReview(reviewId, 1);
+        }
         log.info("add like review id {} user id {}", reviewId, userId);
     }
 
-    @Override
     public void addDislikeReview(Long reviewId, Long userId) {
-        reviewLikesDao.addDislikeReview(reviewId, userId);
-        reviewDao.decreaseUsefulReview(reviewId);
+        if (reviewLikesDao.hasReactionToReview(reviewId, userId, false)) {
+            log.info("User {} already disliked review {}", userId, reviewId);
+        }
+
+        if (reviewLikesDao.hasReactionToReview(reviewId, userId, true)) {
+            reviewLikesDao.removeLikeReview(reviewId, userId);
+            reviewDao.decreaseUsefulReview(reviewId, 2);
+        } else {
+            reviewLikesDao.addDislikeReview(reviewId, userId);
+            reviewDao.decreaseUsefulReview(reviewId, 1);
+        }
         log.info("add dislike review id {} user id {}", reviewId, userId);
     }
 
     @Override
     public void removeLikeReview(Long reviewId, Long userId) {
-        reviewLikesDao.removeLikeReview(reviewId, userId);
-        reviewDao.decreaseUsefulReview(reviewId);
-        log.info("remove like review id {} user id {}", reviewId, userId);
+        if (reviewLikesDao.hasReactionToReview(reviewId, userId, true)) {
+            reviewLikesDao.removeLikeReview(reviewId, userId);
+            reviewDao.decreaseUsefulReview(reviewId, 1);
+            log.info("Removed like: reviewId={} userId={}", reviewId, userId);
+        } else {
+            log.info("No like to remove for reviewId={} userId={}", reviewId, userId);
+        }
     }
 
     @Override
     public void removeDislikeReview(Long reviewId, Long userId) {
-        reviewLikesDao.removeDislikeReview(reviewId, userId);
-        reviewDao.increaseUsefulReview(reviewId);
-        log.info("remove dislike review id {} user id {}", reviewId, userId);
+        if (reviewLikesDao.hasReactionToReview(reviewId, userId, false)) {
+            reviewLikesDao.removeDislikeReview(reviewId, userId);
+            reviewDao.increaseUsefulReview(reviewId, 1);
+            log.info("Removed dislike: reviewId={} userId={}", reviewId, userId);
+        } else {
+            log.info("No dislike to remove for reviewId={} userId={}", reviewId, userId);
+        }
     }
 }

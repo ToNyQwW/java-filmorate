@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.dao.reviews;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -28,7 +29,7 @@ public class ReviewDaoImpl implements ReviewDao {
     public Review addReview(Review review) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("content", review.getContent())
-                .addValue("isPositive", review.isPositive())
+                .addValue("isPositive", review.getIsPositive())
                 .addValue("userId", review.getUserId())
                 .addValue("filmId", review.getFilmId())
                 .addValue("useful", review.getUseful());
@@ -36,14 +37,15 @@ public class ReviewDaoImpl implements ReviewDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(AddReviewSql.create(), params, keyHolder);
 
-        review.setId(keyHolder.getKey().longValue());
+        review.setReviewId(keyHolder.getKey().longValue());
 
         return review;
     }
 
     @Override
     public Optional<Review> getReviewById(Long id) {
-        var review = jdbcTemplate.queryForObject(GetReviewByIdSql.create(), reviewRowMapper, id);
+        var result = jdbcTemplate.query(GetReviewByIdSql.create(), reviewRowMapper, id);
+        var review = DataAccessUtils.singleResult(result);
 
         return Optional.ofNullable(review);
     }
@@ -61,20 +63,20 @@ public class ReviewDaoImpl implements ReviewDao {
     @Override
     public Review updateReview(Review review) {
         int updatedCount = jdbcTemplate.update(UpdateReviewSql.create(), review.getContent(),
-                review.isPositive(),
+                review.getIsPositive(),
                 review.getUseful(),
-                review.getId());
+                review.getReviewId());
 
         if (updatedCount == 0) {
             log.error("Failed to update review");
-            throw new NotFoundException("review with id " + review.getId() + " not found");
+            throw new NotFoundException("review with id " + review.getReviewId() + " not found");
         }
         return review;
     }
 
     @Override
-    public void increaseUsefulReview(Long reviewId) {
-        var updatedCount = jdbcTemplate.update(IncreaseUsefulReviewSql.create(), reviewId);
+    public void increaseUsefulReview(Long reviewId, int delta) {
+        var updatedCount = jdbcTemplate.update(IncreaseUsefulReviewSql.create(), delta, reviewId);
 
         if (updatedCount == 0) {
             log.error("Failed to update useful review");
@@ -83,8 +85,8 @@ public class ReviewDaoImpl implements ReviewDao {
     }
 
     @Override
-    public void decreaseUsefulReview(Long reviewId) {
-        var updatedCount = jdbcTemplate.update(DecreaseUsefulReviewSql.create(), reviewId);
+    public void decreaseUsefulReview(Long reviewId, int delta) {
+        var updatedCount = jdbcTemplate.update(DecreaseUsefulReviewSql.create(), delta, reviewId);
 
         if (updatedCount == 0) {
             log.error("Failed to update useful review");

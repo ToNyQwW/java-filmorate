@@ -7,9 +7,9 @@ public class RemoveLikeReviewSql {
 
     private static final String REMOVE_LIKE_REVIEW_SQL = """
             DELETE FROM review_likes
-            WHERE user_id = ?
+            WHERE review_id = ?
             AND
-                review_id = ?
+                user_id = ?
             AND
                 is_positive = true
             """;

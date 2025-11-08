@@ -9,4 +9,6 @@ public interface ReviewLikesDao {
     void removeLikeReview(Long reviewId, Long userId);
 
     void removeDislikeReview(Long reviewId, Long userId);
+
+    boolean hasReactionToReview(Long reviewId, Long userId, boolean isPositive);
 }

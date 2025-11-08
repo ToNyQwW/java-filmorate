@@ -1,29 +1,30 @@
 package ru.yandex.practicum.filmorate.entity;
 
-import jakarta.validation.constraints.Min;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static ru.yandex.practicum.filmorate.constants.ValidateConstants.MIN_ID;
-
 @Data
 @Builder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "reviewId")
 public class Review {
 
-    private Long id;
+    private Long reviewId;
 
     @NotBlank
     private String content;
 
-    private boolean isPositive;
+    @JsonProperty("isPositive")
+    @NotNull
+    private Boolean isPositive;
 
-    @Min(MIN_ID)
+    @NotNull
     private Long userId;
 
-    @Min(MIN_ID)
+    @NotNull
     private Long filmId;
 
     private int useful;

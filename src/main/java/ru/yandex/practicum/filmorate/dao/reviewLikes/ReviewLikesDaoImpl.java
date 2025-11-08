@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.dao.reviewLikes.sql.AddDislikeReviewSql;
-import ru.yandex.practicum.filmorate.dao.reviewLikes.sql.AddLikeReviewSql;
-import ru.yandex.practicum.filmorate.dao.reviewLikes.sql.RemoveDislikeReviewSql;
-import ru.yandex.practicum.filmorate.dao.reviewLikes.sql.RemoveLikeReviewSql;
+import ru.yandex.practicum.filmorate.dao.reviewLikes.sql.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 @Slf4j
@@ -55,5 +52,12 @@ public class ReviewLikesDaoImpl implements ReviewLikesDao {
             log.error("Failed remove dislike from review");
             throw new NotFoundException("review or user not found");
         }
+    }
+
+    @Override
+    public boolean hasReactionToReview(Long reviewId, Long userId, boolean isPositive) {
+        var count = jdbcTemplate.queryForObject(
+                CheckReactionSql.create(), Long.class, reviewId, userId, isPositive);
+        return count > 0;
     }
 }
