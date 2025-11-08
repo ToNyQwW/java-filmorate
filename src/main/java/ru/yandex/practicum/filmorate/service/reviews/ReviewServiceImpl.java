@@ -25,7 +25,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review getReview(Long id) {
-        var review = reviewDao.getReview(id);
+        var review = reviewDao.getReviewById(id);
 
         if (review.isPresent()) {
             var findedReview = review.get();
@@ -37,11 +37,16 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> getReviewsByFilmId(Long filmId, int count) {
-        var filmReviews = reviewDao.getReviewsByFilmId(filmId, count);
-        log.info("Number of reviews found: {}", filmReviews.size());
+    public List<Review> getReviews(Long filmId, int count) {
+        List<Review> reviews;
+        if (filmId == 0) {
+            reviews = reviewDao.getReviewsWithCount(count);
+        } else {
+            reviews = reviewDao.getReviewsByFilmId(filmId, count);
+        }
+        log.info("Number of reviews found: {}", reviews.size());
 
-        return filmReviews;
+        return reviews;
     }
 
     @Override

@@ -42,10 +42,15 @@ public class ReviewDaoImpl implements ReviewDao {
     }
 
     @Override
-    public Optional<Review> getReview(Long id) {
+    public Optional<Review> getReviewById(Long id) {
         var review = jdbcTemplate.queryForObject(GetReviewByIdSql.create(), reviewRowMapper, id);
 
         return Optional.ofNullable(review);
+    }
+
+    @Override
+    public List<Review> getReviewsWithCount(int count) {
+        return jdbcTemplate.query(GetAllReviewsWithCountSql.create(), reviewRowMapper, count);
     }
 
     @Override

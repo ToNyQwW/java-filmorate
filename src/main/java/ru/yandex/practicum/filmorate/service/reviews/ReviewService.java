@@ -10,7 +10,7 @@ public interface ReviewService {
 
     Review getReview(Long id);
 
-    List<Review> getReviewsByFilmId(Long filmId, int count);
+    List<Review> getReviews(Long filmId, int count);
 
     Review updateReview(Review review);
 

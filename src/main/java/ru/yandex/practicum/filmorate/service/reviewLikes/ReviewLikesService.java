@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service.reviewLikes;
 
-public interface reviewLikesService {
+public interface ReviewLikesService {
 
     void addLikeReview(Long reviewId, Long userId);
 

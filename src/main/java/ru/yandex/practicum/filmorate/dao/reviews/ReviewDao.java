@@ -9,7 +9,9 @@ public interface ReviewDao {
 
     Review addReview(Review review);
 
-    Optional<Review> getReview(Long id);
+    Optional<Review> getReviewById(Long id);
+
+    List<Review> getReviewsWithCount(int count);
 
     List<Review> getReviewsByFilmId(Long filmId, int count);
 

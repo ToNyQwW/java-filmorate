@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.dao.reviews.ReviewDao;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class reviewLikesImpl implements reviewLikesService {
+public class ReviewLikesImpl implements ReviewLikesService {
 
     private final ReviewDao reviewDao;
     private final ReviewLikesDao reviewLikesDao;
