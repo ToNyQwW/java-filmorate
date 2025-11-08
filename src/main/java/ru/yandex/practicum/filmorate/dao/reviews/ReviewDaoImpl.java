@@ -20,8 +20,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ReviewDaoImpl implements ReviewDao {
 
-    private final ReviewRowMapper reviewRowMapper;
     private final JdbcTemplate jdbcTemplate;
+    private final ReviewRowMapper reviewRowMapper;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
@@ -65,6 +65,26 @@ public class ReviewDaoImpl implements ReviewDao {
             throw new NotFoundException("review with id " + review.getId() + " not found");
         }
         return review;
+    }
+
+    @Override
+    public void increaseUsefulReview(Long reviewId) {
+        var updatedCount = jdbcTemplate.update(IncreaseUsefulReviewSql.create(), reviewId);
+
+        if (updatedCount == 0) {
+            log.error("Failed to update useful review");
+            throw new NotFoundException("review with id " + reviewId + " not found");
+        }
+    }
+
+    @Override
+    public void decreaseUsefulReview(Long reviewId) {
+        var updatedCount = jdbcTemplate.update(DecreaseUsefulReviewSql.create(), reviewId);
+
+        if (updatedCount == 0) {
+            log.error("Failed to update useful review");
+            throw new NotFoundException("review with id " + reviewId + " not found");
+        }
     }
 
     @Override

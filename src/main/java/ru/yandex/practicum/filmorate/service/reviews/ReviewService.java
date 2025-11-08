@@ -1,23 +1,18 @@
-package ru.yandex.practicum.filmorate.dao.reviews;
+package ru.yandex.practicum.filmorate.service.reviews;
 
 import ru.yandex.practicum.filmorate.entity.Review;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ReviewDao {
+public interface ReviewService {
 
     Review addReview(Review review);
 
-    Optional<Review> getReview(Long id);
+    Review getReview(Long id);
 
     List<Review> getReviewsByFilmId(Long filmId, int count);
 
     Review updateReview(Review review);
-
-    void increaseUsefulReview(Long reviewId);
-
-    void decreaseUsefulReview(Long reviewId);
 
     void deleteReview(Long id);
 }
