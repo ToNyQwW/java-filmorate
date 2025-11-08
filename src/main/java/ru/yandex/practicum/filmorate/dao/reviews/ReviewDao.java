@@ -17,9 +17,9 @@ public interface ReviewDao {
 
     Review updateReview(Review review);
 
-    void increaseUsefulReview(Long reviewId);
+    void increaseUsefulReview(Long reviewId, int delta);
 
-    void decreaseUsefulReview(Long reviewId);
+    void decreaseUsefulReview(Long reviewId, int delta);
 
     void deleteReview(Long id);
 }

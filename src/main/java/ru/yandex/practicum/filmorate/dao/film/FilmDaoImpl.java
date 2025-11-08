@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.dao.film;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -46,7 +47,8 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public Optional<Film> getFilm(Long filmId) {
-        var film = jdbcTemplate.queryForObject(GetFilmWithMpaSql.create(), filmRowMapper, filmId);
+        var result = jdbcTemplate.query(GetFilmWithMpaSql.create(), filmRowMapper, filmId);
+        var film = DataAccessUtils.singleResult(result);
 
         if (film != null) {
             var filmLikes = likesDao.getFilmLikes(filmId);

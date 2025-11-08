@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.reviews.ReviewDao;
 import ru.yandex.practicum.filmorate.entity.Review;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.util.List;
 
@@ -15,9 +17,19 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewDao reviewDao;
+    private final UserService userService;
+    private final FilmService filmService;
 
     @Override
     public Review addReview(Review review) {
+
+        if (userService.getUser(review.getUserId()) == null) {
+            throw new NotFoundException("User with id " + review.getUserId() + " not found");
+        }
+        if (filmService.getFilm(review.getFilmId()) == null) {
+            throw new NotFoundException("Film with id " + review.getFilmId() + " not found");
+        }
+
         var addedReview = reviewDao.addReview(review);
         log.info("Review added: {}", addedReview);
         return addedReview;

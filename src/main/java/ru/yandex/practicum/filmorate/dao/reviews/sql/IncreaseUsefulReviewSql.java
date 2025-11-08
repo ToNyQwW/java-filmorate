@@ -7,7 +7,7 @@ public class IncreaseUsefulReviewSql {
 
     private static final String INCREASE_USEFUL_REVIEW_SQL = """
             UPDATE reviews
-            SET useful = useful + 1
+            SET useful = useful + ?
             WHERE review_id = ?
             """;
 
