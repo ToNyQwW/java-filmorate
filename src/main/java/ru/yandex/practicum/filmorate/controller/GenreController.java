@@ -11,13 +11,12 @@ import ru.yandex.practicum.filmorate.service.genre.GenreService;
 
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.constants.ValidateConstants.MIN_ID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/genres")
 public class GenreController {
-
-    private static final long MIN_ID = 1L;
-
     private final GenreService genreService;
 
     @GetMapping
