@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film;
 
 import ru.yandex.practicum.filmorate.entity.Film;
+import ru.yandex.practicum.filmorate.model.SortType;
 
 import java.util.List;
 
@@ -11,6 +12,8 @@ public interface FilmService {
     Film getFilm(Long id);
 
     List<Film> getFilms();
+
+    List<Film> getFilmsByDirectorId(Long id, SortType sortType);
 
     Film updateFilm(Film film);
 

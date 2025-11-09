@@ -9,6 +9,7 @@ public class GetGenresSql {
                     SELECT genre_id,
                            name
                     FROM genre
+                    ORDER BY genre_id
             """;
 
     public static String create() {

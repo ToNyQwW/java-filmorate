@@ -17,7 +17,7 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException e) {
-        return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class})

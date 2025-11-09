@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.entity.Film;
+import ru.yandex.practicum.filmorate.model.SortType;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import java.util.List;
@@ -33,6 +34,12 @@ public class FilmController {
     @GetMapping
     public List<Film> getFilms() {
         return filmService.getFilms();
+    }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getDirectorFilms(
+            @PathVariable @Min(MIN_ID) Long directorId, @RequestParam String sortBy) {
+        return filmService.getFilmsByDirectorId(directorId, SortType.valueOf(sortBy.toUpperCase()));
     }
 
     @PutMapping
