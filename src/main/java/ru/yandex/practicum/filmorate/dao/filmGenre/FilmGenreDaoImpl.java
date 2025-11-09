@@ -17,9 +17,8 @@ import java.util.*;
 @AllArgsConstructor
 public class FilmGenreDaoImpl implements FilmGenreDao {
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final JdbcTemplate jdbcTemplate;
-    private final GenreDao genreDao;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public void addFilmGenres(Long filmId, Set<Genre> genres) {
@@ -32,26 +31,24 @@ public class FilmGenreDaoImpl implements FilmGenreDao {
     }
 
     @Override
-    public List<Genre> getFilmGenres(Long filmId) {
-        List<Long> genreIds = jdbcTemplate.queryForList(GetFilmGenresSql.create(), Long.class, filmId);
-
-        return genreDao.getGenresByListId(genreIds);
+    public List<Long> getFilmGenres(Long filmId) {
+        return jdbcTemplate.queryForList(GetFilmGenresSql.create(), Long.class, filmId);
     }
 
     @Override
-    public Map<Long, List<Genre>> getFilmsGenresByListFilmIds(List<Long> filmIds) {
+    public Map<Long, List<Long>> getFilmsGenresByListFilmIds(List<Long> filmIds) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("filmsIds", filmIds);
 
         return namedParameterJdbcTemplate.query(GetFilmsGenresByListFilmsIdsSql.create(), params, rs -> {
-            Map<Long, List<Genre>> result = new HashMap<>();
+            Map<Long, List<Long>> result = new HashMap<>();
 
             while (rs.next()) {
                 var filmId = rs.getLong("film_id");
                 var genreId = rs.getLong("genre_id");
 
                 result.computeIfAbsent(filmId, value -> new ArrayList<>())
-                        .add(genreDao.getGenreById(genreId).get());
+                        .add(genreId);
             }
 
             return result;

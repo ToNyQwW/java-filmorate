@@ -32,6 +32,8 @@ public class UserServiceImpl implements UserService {
         var user = userDao.getUser(id);
         if (user.isPresent()) {
             var findedUser = user.get();
+            var friends = friendshipDao.getFriends(id);
+            findedUser.setFriends(friends);
             log.info("User found: {}", findedUser);
             return findedUser;
         }
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUsers() {
         var users = userDao.getAllUsers();
+        buildUsers(users);
         log.info("Number of users found: {}", users.size());
         return users;
     }
@@ -71,9 +74,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getFriends(Long id) {
         throwIfUserIdNotExists(id);
-        var friends = friendshipDao.getFriends(id);
+        var friendsIds = friendshipDao.getFriends(id);
+        var friends = userDao.getUsersByIds(friendsIds);
+        buildUsers(friends);
         log.info("Number of friends found: {}", friends.size());
-        return userDao.getUsersByIds(friends);
+        return friends;
     }
 
     @Override
@@ -101,6 +106,18 @@ public class UserServiceImpl implements UserService {
     private void normalize(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
+        }
+    }
+
+    private void buildUsers(List<User> users) {
+        var userIds = users.stream()
+                .map(User::getId).toList();
+
+        var friendsByUserIds = friendshipDao.getFriendsByUserIds(userIds);
+
+        for (User user : users) {
+            var friendship = friendsByUserIds.get(user.getId());
+            user.setFriends(friendship);
         }
     }
 }

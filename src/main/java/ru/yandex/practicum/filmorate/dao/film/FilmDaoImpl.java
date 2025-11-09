@@ -10,20 +10,17 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.film.sql.*;
-import ru.yandex.practicum.filmorate.dao.filmGenre.FilmGenreDao;
-import ru.yandex.practicum.filmorate.dao.likes.LikesDao;
 import ru.yandex.practicum.filmorate.entity.Film;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
 @AllArgsConstructor
 public class FilmDaoImpl implements FilmDao {
 
-    private final LikesDao likesDao;
-    private final FilmGenreDao filmGenreDao;
     private final JdbcTemplate jdbcTemplate;
     private final FilmRowMapper filmRowMapper;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -50,58 +47,20 @@ public class FilmDaoImpl implements FilmDao {
         var result = jdbcTemplate.query(GetFilmWithMpaSql.create(), filmRowMapper, filmId);
         var film = DataAccessUtils.singleResult(result);
 
-        if (film != null) {
-            var filmLikes = likesDao.getFilmLikes(filmId);
-            var filmGenres = filmGenreDao.getFilmGenres(filmId);
-
-            film.setLikes(new LinkedHashSet<>(filmLikes));
-            film.setGenres(new LinkedHashSet<>(filmGenres));
-        }
         return Optional.ofNullable(film);
     }
 
     @Override
     public List<Film> getFilms() {
-        List<Film> films = jdbcTemplate.query(GetAllFilmsWithMpaSql.create(), filmRowMapper);
-
-        return buildFilms(films);
+        return jdbcTemplate.query(GetAllFilmsWithMpaSql.create(), filmRowMapper);
     }
 
     @Override
-    public List<Film> getPopularFilms(Long count) {
-        var popularFilmIds = likesDao.getPopularFilmIds(count);
-
-        if (popularFilmIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-
+    public List<Film> getPopularFilms(List<Long> popularFilmIds) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("filmsIds", popularFilmIds);
 
-        var films = namedParameterJdbcTemplate.query(GetFilmsByListIdsSql.create(), params, filmRowMapper);
-        var result = buildFilms(films);
-
-        sortFilmsByPopularityOrder(result, popularFilmIds);
-
-        return result;
-    }
-
-    private void sortFilmsByPopularityOrder(List<Film> films, List<Long> popularFilmIds) {
-        films.sort(Comparator.comparingInt(film -> popularFilmIds.indexOf(film.getId())));
-    }
-
-    private List<Film> buildFilms(List<Film> films) {
-
-        var filmsIds = films.stream().map(Film::getId).toList();
-        var userLikes = likesDao.getUserLikesByFilmIds(filmsIds);
-        var filmsGenres = filmGenreDao.getFilmsGenresByListFilmIds(filmsIds);
-
-        for (Film film : films) {
-            var id = film.getId();
-            film.setLikes(new HashSet<>(userLikes.getOrDefault(id, Collections.emptyList())));
-            film.setGenres(new HashSet<>(filmsGenres.getOrDefault(id, Collections.emptyList())));
-        }
-        return films;
+        return namedParameterJdbcTemplate.query(GetFilmsByListIdsSql.create(), params, filmRowMapper);
     }
 
     @Override

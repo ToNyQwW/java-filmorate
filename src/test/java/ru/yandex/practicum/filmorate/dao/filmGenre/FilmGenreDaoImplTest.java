@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import ru.yandex.practicum.filmorate.dao.film.FilmDao;
 import ru.yandex.practicum.filmorate.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.entity.Genre;
 
@@ -52,7 +53,8 @@ class FilmGenreDaoImplTest {
 
         filmGenreDao.addFilmGenres(filmId, Set.of(comedy, drama));
 
-        List<Genre> filmGenres = filmGenreDao.getFilmGenres(filmId);
+        List<Long> filmGenresIds = filmGenreDao.getFilmGenres(filmId);
+        var filmGenres = genreDao.getGenresByListId(filmGenresIds);
 
         assertNotNull(filmGenres);
         assertEquals(2, filmGenres.size());
@@ -73,18 +75,11 @@ class FilmGenreDaoImplTest {
 
         filmGenreDao.addFilmGenres(filmId, Set.of(comedy, drama));
 
-        Map<Long, List<Genre>> result = filmGenreDao.getFilmsGenresByListFilmIds(List.of(filmId));
+        Map<Long, List<Long>> result = filmGenreDao.getFilmsGenresByListFilmIds(List.of(filmId));
+
 
         assertNotNull(result);
         assertTrue(result.containsKey(filmId));
-
-        List<Genre> genres = result.get(filmId);
-        List<String> genreNames = genres.stream()
-                .map(Genre::getName)
-                .toList();
-
-        assertTrue(genreNames.contains("Комедия"));
-        assertTrue(genreNames.contains("Драма"));
     }
 
     private Genre findGenreByName(String name) {

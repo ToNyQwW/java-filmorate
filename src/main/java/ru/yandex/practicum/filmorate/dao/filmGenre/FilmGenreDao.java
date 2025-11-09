@@ -10,7 +10,7 @@ public interface FilmGenreDao {
 
     void addFilmGenres(Long filmId, Set<Genre> genres);
 
-    List<Genre> getFilmGenres(Long filmId);
+    List<Long> getFilmGenres(Long filmId);
 
-    Map<Long, List<Genre>> getFilmsGenresByListFilmIds(List<Long> filmIds);
+    Map<Long, List<Long>> getFilmsGenresByListFilmIds(List<Long> filmIds);
 }
