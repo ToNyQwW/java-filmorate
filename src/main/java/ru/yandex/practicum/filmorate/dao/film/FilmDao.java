@@ -13,7 +13,7 @@ public interface FilmDao {
 
     List<Film> getFilms();
 
-    List<Film> getPopularFilms(List<Long> popularFilmIds);
+    List<Film> getFilmsByListIds(List<Long> filmIds);
 
     Film updateFilm(Film film);
 }

@@ -9,7 +9,7 @@ public class GetFilmsDirectorsByListFilmsIdsSql {
             SELECT film_id,
                    director_id
             FROM film_directors
-            WHERE film_id IN (:filmIds)
+            WHERE film_id IN (:filmsIds)
             """;
 
     public static String create() {

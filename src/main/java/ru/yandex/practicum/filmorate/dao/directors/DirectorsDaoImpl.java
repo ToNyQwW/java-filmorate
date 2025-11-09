@@ -44,6 +44,14 @@ public class DirectorsDaoImpl implements DirectorsDao {
     }
 
     @Override
+    public List<Director> getDirectorsByListIds(List<Long> ids) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("directorIds", ids);
+
+        return namedParameterJdbcTemplate.query(GetDirectorsByListIds.create(), params, directorRowMapper);
+    }
+
+    @Override
     public Optional<Director> getDirectorById(Long id) {
         var result = jdbcTemplate.query(GetDirectorByIdSql.create(), directorRowMapper, id);
         var review = DataAccessUtils.singleResult(result);

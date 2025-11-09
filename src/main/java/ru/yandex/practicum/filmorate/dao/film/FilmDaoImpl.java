@@ -56,9 +56,9 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public List<Film> getPopularFilms(List<Long> popularFilmIds) {
+    public List<Film> getFilmsByListIds(List<Long> filmIds) {
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("filmsIds", popularFilmIds);
+                .addValue("filmsIds", filmIds);
 
         return namedParameterJdbcTemplate.query(GetFilmsByListIdsSql.create(), params, filmRowMapper);
     }

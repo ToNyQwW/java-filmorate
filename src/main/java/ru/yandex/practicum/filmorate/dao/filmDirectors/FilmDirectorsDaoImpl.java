@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.filmDirectors.sql.AddFilmDirectorSql;
 import ru.yandex.practicum.filmorate.dao.filmDirectors.sql.GetFilmDirectorsSql;
+import ru.yandex.practicum.filmorate.dao.filmDirectors.sql.GetFilmsByDirectorId;
 import ru.yandex.practicum.filmorate.dao.filmDirectors.sql.GetFilmsDirectorsByListFilmsIdsSql;
 import ru.yandex.practicum.filmorate.entity.Director;
 
@@ -33,6 +34,11 @@ public class FilmDirectorsDaoImpl implements FilmDirectorsDao {
     @Override
     public List<Long> getFilmDirectors(Long filmId) {
         return jdbcTemplate.queryForList(GetFilmDirectorsSql.create(), Long.class, filmId);
+    }
+
+    @Override
+    public List<Long> getFilmsByDirectorId(Long directorId) {
+        return jdbcTemplate.queryForList(GetFilmsByDirectorId.create(), Long.class, directorId);
     }
 
     @Override

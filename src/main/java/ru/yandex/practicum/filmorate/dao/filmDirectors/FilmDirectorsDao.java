@@ -12,5 +12,7 @@ public interface FilmDirectorsDao {
 
     List<Long> getFilmDirectors(Long filmId);
 
+    List<Long> getFilmsByDirectorId(Long directorId);
+
     Map<Long, List<Long>> getFilmsDirectorsByListFilmIds(List<Long> filmIds);
 }
