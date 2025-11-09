@@ -39,7 +39,7 @@ public class FilmController {
     @GetMapping("/director/{directorId}")
     public List<Film> getDirectorFilms(
             @PathVariable @Min(MIN_ID) Long directorId, @RequestParam String sortBy) {
-        return filmService.getFilmsByDirectorId(directorId, SortType.valueOf(sortBy));
+        return filmService.getFilmsByDirectorId(directorId, SortType.valueOf(sortBy.toUpperCase()));
     }
 
     @PutMapping

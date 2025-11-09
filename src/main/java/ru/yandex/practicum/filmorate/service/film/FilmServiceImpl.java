@@ -32,8 +32,10 @@ public class FilmServiceImpl implements FilmService {
     private final FilmGenreDao filmGenreDao;
     private final FilmDirectorsDao filmDirectorsDao;
 
+    @Override
     public Film addFilm(Film film) {
         throwIfMpaIdNotExists(film.getMpa().getId());
+
         var genres = film.getGenres();
         if (genres != null) {
             throwIfGenresNotExists(genres);
@@ -45,8 +47,13 @@ public class FilmServiceImpl implements FilmService {
         }
 
         var addedFilm = filmDao.addFilm(film);
+
         if (genres != null && !genres.isEmpty()) {
             filmGenreDao.addFilmGenres(addedFilm.getId(), genres);
+        }
+
+        if (directors != null && !directors.isEmpty()) {
+            filmDirectorsDao.addFilmDirector(addedFilm.getId(), directors);
         }
 
         var result = getFilm(addedFilm.getId());
@@ -107,7 +114,29 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film updateFilm(Film film) {
-        var updatedFilm = filmDao.updateFilm(film);
+        throwIfMpaIdNotExists(film.getMpa().getId());
+
+        var genres = film.getGenres();
+        if (genres != null) {
+            throwIfGenresNotExists(genres);
+        }
+
+        var directors = film.getDirectors();
+        if (directors != null) {
+            throwIfDirectorsNotExists(directors);
+        }
+
+        filmDao.updateFilm(film);
+
+        if (genres != null && !genres.isEmpty()) {
+            filmGenreDao.addFilmGenres(film.getId(), genres);
+        }
+
+        if (directors != null && !directors.isEmpty()) {
+            filmDirectorsDao.addFilmDirector(film.getId(), directors);
+        }
+
+        var updatedFilm = getFilm(film.getId());
         log.info("Film updated: {}", updatedFilm);
         return updatedFilm;
     }
@@ -163,7 +192,7 @@ public class FilmServiceImpl implements FilmService {
         var directorsIds = directors.stream()
                 .map(Director::getId)
                 .toList();
-        if (directorsIds.size() != filmDirectorsDao.getFilmsDirectorsByListFilmIds(directorsIds).size()) {
+        if (directorsIds.size() != directorsDao.getDirectorsByListIds(directorsIds).size()) {
             log.error("Director(s) with id {} not found", directorsIds);
             throw new NotFoundException("Directors(s) not found");
         }
@@ -216,10 +245,10 @@ public class FilmServiceImpl implements FilmService {
     }
 
     private void sortFilmsByYear(List<Film> films) {
-        films.sort(Comparator.comparingInt(film -> film.getReleaseDate().getYear()));
+        films.sort(Comparator.comparing(Film::getReleaseDate));
     }
 
     private void sortFilmsByLikes(List<Film> films) {
-        films.sort(Comparator.comparingInt(film -> film.getLikes().size()));
+        films.sort(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed());
     }
 }
