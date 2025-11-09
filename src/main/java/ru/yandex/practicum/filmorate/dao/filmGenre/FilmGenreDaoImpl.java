@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.filmGenre.sql.AddFilmGenresSql;
 import ru.yandex.practicum.filmorate.dao.filmGenre.sql.GetFilmGenresSql;
 import ru.yandex.practicum.filmorate.dao.filmGenre.sql.GetFilmsGenresByListFilmsIdsSql;
-import ru.yandex.practicum.filmorate.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.entity.Genre;
 
 import java.util.*;
