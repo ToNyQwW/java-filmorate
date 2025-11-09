@@ -10,14 +10,12 @@ import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.constants.ValidateConstants.*;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
-
-    private static final String DEFAULT_COUNT_POPULAR_FILMS = "10";
-    private static final long MIN_ID = 1L;
-    private static final long MIN_COUNT = 1L;
 
     private final FilmService filmService;
 

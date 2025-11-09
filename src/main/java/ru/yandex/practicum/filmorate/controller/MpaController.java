@@ -11,12 +11,12 @@ import ru.yandex.practicum.filmorate.service.mpa.MpaService;
 
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.constants.ValidateConstants.MIN_ID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/mpa")
 public class MpaController {
-
-    private static final long MIN_ID = 1L;
 
     private final MpaService mpaService;
 

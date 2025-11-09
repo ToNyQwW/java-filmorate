@@ -10,14 +10,14 @@ import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.constants.ValidateConstants.MIN_ID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
-
-    private static final long MIN_ID = 1L;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

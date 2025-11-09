@@ -9,6 +9,7 @@ public class GetAllMpaSql {
                     SELECT mpa_id as id,
                            name
                     FROM mpa
+                    ORDER BY mpa_id
             """;
 
     public static String create() {
