@@ -14,4 +14,6 @@ public interface LikesDao {
     List<Long> getPopularFilmIds(Long count);
 
     void removeLike(Long filmId, Long userId);
+
+    List<Long> getRecommendationsFilmIds(Long userId);
 }

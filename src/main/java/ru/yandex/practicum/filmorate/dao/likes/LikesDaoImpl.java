@@ -73,4 +73,14 @@ public class LikesDaoImpl implements LikesDao {
             throw new NotFoundException("Cannot remove like: user or film not found");
         }
     }
+
+    @Override
+    public List<Long> getRecommendationsFilmIds(Long userId) {
+        var similarUserId = jdbcTemplate.queryForList(
+                GetMostCommonUserByLikesSql.create(),
+                Long.class, userId, userId).getFirst();
+
+        return jdbcTemplate.queryForList(GetRecommendedFilmsBySimilarUserSql.create(),
+                Long.class, similarUserId, userId);
+    }
 }
