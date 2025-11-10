@@ -22,4 +22,6 @@ public interface FilmService {
     void removeLike(Long filmId, Long userId);
 
     List<Film> getPopularFilms(Long count);
+
+    List<Film> getRecommendedFilms(Long userId);
 }

@@ -169,6 +169,19 @@ public class FilmServiceImpl implements FilmService {
         return popularFilms;
     }
 
+    @Override
+    public List<Film> getRecommendedFilms(Long userId) {
+        var recommendationsFilmIds = likesDao.getRecommendationsFilmIds(userId);
+
+        if (recommendationsFilmIds.isEmpty()) {
+            log.info("No recommendations films found");
+            return Collections.emptyList();
+        }
+
+        log.info("Number of Recommendations films found: {}", recommendationsFilmIds.size());
+        return filmDao.getFilmsByListIds(recommendationsFilmIds);
+    }
+
     private void throwIfMpaIdNotExists(Long mpaId) {
         var mpa = mpaDao.getMpaById(mpaId);
 

@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.likes.sql.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -72,5 +69,19 @@ public class LikesDaoImpl implements LikesDao {
         if (updatedCount == 0) {
             throw new NotFoundException("Cannot remove like: user or film not found");
         }
+    }
+
+    @Override
+    public List<Long> getRecommendationsFilmIds(Long userId) {
+        var similarUserIds = jdbcTemplate.queryForList(
+                GetMostCommonUserByLikesSql.create(),
+                Long.class, userId, userId);
+
+        if (similarUserIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return jdbcTemplate.queryForList(GetRecommendedFilmsBySimilarUserSql.create(),
+                Long.class, similarUserIds.getFirst(), userId);
     }
 }
