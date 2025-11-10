@@ -73,15 +73,15 @@ public class LikesDaoImpl implements LikesDao {
 
     @Override
     public List<Long> getRecommendationsFilmIds(Long userId) {
-        var similarUserId = jdbcTemplate.queryForList(
+        var similarUserIds = jdbcTemplate.queryForList(
                 GetMostCommonUserByLikesSql.create(),
                 Long.class, userId, userId);
 
-        if (similarUserId.isEmpty()) {
+        if (similarUserIds.isEmpty()) {
             return Collections.emptyList();
         }
 
         return jdbcTemplate.queryForList(GetRecommendedFilmsBySimilarUserSql.create(),
-                Long.class, similarUserId, userId);
+                Long.class, similarUserIds.getFirst(), userId);
     }
 }
