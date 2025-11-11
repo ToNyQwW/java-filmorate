@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.service.events.EventsService;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 

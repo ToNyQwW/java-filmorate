@@ -20,7 +20,6 @@ import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.SortType;
 import ru.yandex.practicum.filmorate.service.events.EventsService;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;

@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.model.EventOperation;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.service.events.EventsService;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
