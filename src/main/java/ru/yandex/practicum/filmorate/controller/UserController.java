@@ -5,8 +5,10 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.entity.Event;
 import ru.yandex.practicum.filmorate.entity.Film;
 import ru.yandex.practicum.filmorate.entity.User;
+import ru.yandex.practicum.filmorate.service.events.EventsService;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
@@ -21,6 +23,7 @@ public class UserController {
 
     private final UserService userService;
     private final FilmService filmService;
+    private final EventsService eventsService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -66,5 +69,10 @@ public class UserController {
     @GetMapping("/{id}/recommendations")
     public List<Film> getRecommendations(@PathVariable @Min(MIN_ID) Long id) {
         return filmService.getRecommendedFilms(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Event> getUserEvents(@PathVariable @Min(MIN_ID) Long id) {
+        return eventsService.getUserEvents(id);
     }
 }

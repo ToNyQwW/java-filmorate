@@ -11,11 +11,16 @@ import ru.yandex.practicum.filmorate.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.dao.likes.LikesDao;
 import ru.yandex.practicum.filmorate.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.entity.Director;
+import ru.yandex.practicum.filmorate.entity.Event;
 import ru.yandex.practicum.filmorate.entity.Film;
 import ru.yandex.practicum.filmorate.entity.Genre;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.EventOperation;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.SortType;
+import ru.yandex.practicum.filmorate.service.events.EventsService;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +35,7 @@ public class FilmServiceImpl implements FilmService {
     private final GenreDao genreDao;
     private final DirectorsDao directorsDao;
     private final FilmGenreDao filmGenreDao;
+    private final EventsService eventsService;
     private final FilmDirectorsDao filmDirectorsDao;
 
     @Override
@@ -145,12 +151,28 @@ public class FilmServiceImpl implements FilmService {
     public void addLike(Long filmId, Long userId) {
         likesDao.addLike(filmId, userId);
         log.info("Added like for filmId: {}, userId: {}", filmId, userId);
+
+        eventsService.createEvent(Event.builder()
+                .entityId(filmId)
+                .timestamp(Instant.now().toEpochMilli())
+                .eventType(EventType.LIKE)
+                .operation(EventOperation.ADD)
+                .userId(userId)
+                .build());
     }
 
     @Override
     public void removeLike(Long filmId, Long userId) {
         likesDao.removeLike(filmId, userId);
         log.info("Removed like for filmId: {}, userId: {}", filmId, userId);
+
+        eventsService.createEvent(Event.builder()
+                .entityId(filmId)
+                .timestamp(Instant.now().toEpochMilli())
+                .eventType(EventType.LIKE)
+                .operation(EventOperation.REMOVE)
+                .userId(userId)
+                .build());
     }
 
     @Override
