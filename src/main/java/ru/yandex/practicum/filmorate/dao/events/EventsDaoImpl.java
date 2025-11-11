@@ -26,8 +26,8 @@ public class EventsDaoImpl implements EventsDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("entityId", event.getEntityId())
                 .addValue("timestamp", event.getTimestamp())
-                .addValue("eventType", event.getType())
-                .addValue("operation", event.getOperation())
+                .addValue("eventType", event.getEventType().name())
+                .addValue("operation", event.getOperation().name())
                 .addValue("userId", event.getUserId());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();

@@ -6,8 +6,6 @@ import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.model.EventOperation;
 import ru.yandex.practicum.filmorate.model.EventType;
 
-import java.sql.Timestamp;
-
 @Data
 @Builder
 @EqualsAndHashCode(of = "id")
@@ -17,9 +15,9 @@ public class Event {
 
     private Long entityId;
 
-    private Timestamp timestamp;
+    private Long timestamp;
 
-    private EventType type;
+    private EventType eventType;
 
     private EventOperation operation;
 

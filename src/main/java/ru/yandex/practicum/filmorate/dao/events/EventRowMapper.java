@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.EventType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 
 @Component
 public class EventRowMapper implements RowMapper<Event> {
@@ -17,9 +18,9 @@ public class EventRowMapper implements RowMapper<Event> {
         return Event.builder()
                 .id(rs.getLong("event_id"))
                 .entityId(rs.getLong("entity_id"))
-                .timestamp(rs.getTimestamp("timestamp"))
-                .type(rs.getObject("event_type", EventType.class))
-                .operation(rs.getObject("operation", EventOperation.class))
+                .timestamp(rs.getLong("timestamp"))
+                .eventType(EventType.valueOf(rs.getString("event_type")))
+                .operation(EventOperation.valueOf(rs.getString("operation")))
                 .userId(rs.getLong("user_id"))
                 .build();
     }

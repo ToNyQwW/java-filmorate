@@ -5,9 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.friendship.FriendshipDao;
 import ru.yandex.practicum.filmorate.dao.user.UserDao;
+import ru.yandex.practicum.filmorate.entity.Event;
 import ru.yandex.practicum.filmorate.entity.User;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.EventOperation;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.service.events.EventsService;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +23,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+    private final EventsService eventsService;
     private final FriendshipDao friendshipDao;
 
     @Override
@@ -61,6 +68,14 @@ public class UserServiceImpl implements UserService {
     public void addFriend(Long id, Long friendId) {
         friendshipDao.addFriend(id, friendId);
         log.info("Friend added: {}", friendId);
+
+        eventsService.createEvent(Event.builder()
+                .entityId(friendId)
+                .timestamp(Instant.now().toEpochMilli())
+                .eventType(EventType.FRIEND)
+                .operation(EventOperation.ADD)
+                .userId(id)
+                .build());
     }
 
     @Override
@@ -69,6 +84,14 @@ public class UserServiceImpl implements UserService {
         throwIfUserIdNotExists(friendId);
         friendshipDao.removeFriend(id, friendId);
         log.info("Friend removed: {}", friendId);
+
+        eventsService.createEvent(Event.builder()
+                .entityId(friendId)
+                .timestamp(Instant.now().toEpochMilli())
+                .eventType(EventType.FRIEND)
+                .operation(EventOperation.REMOVE)
+                .userId(id)
+                .build());
     }
 
     @Override
