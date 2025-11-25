@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,7 +10,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.Map;
 
-@Slf4j
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
@@ -23,11 +21,5 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class})
     public ResponseEntity<Map<String, String>> handleValidationException(Exception e) {
         return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleException(Exception e) {
-        log.error(e.getMessage());
-        return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
